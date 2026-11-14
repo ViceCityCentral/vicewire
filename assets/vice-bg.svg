@@ -1,0 +1,142 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice" role="img" aria-label="Neon Vice City sunset with palm trees over the ocean">
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#04072b"/>
+      <stop offset="0.28" stop-color="#0a2a70"/>
+      <stop offset="0.5" stop-color="#0b6fa8"/>
+      <stop offset="0.68" stop-color="#1fc4d6"/>
+      <stop offset="0.84" stop-color="#ff5fb4"/>
+      <stop offset="1" stop-color="#ffa1d2"/>
+    </linearGradient>
+
+    <radialGradient id="sunGlow" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0" stop-color="#ffe27a" stop-opacity="0.95"/>
+      <stop offset="0.55" stop-color="#ff9d4d" stop-opacity="0.55"/>
+      <stop offset="1" stop-color="#ff3d9a" stop-opacity="0"/>
+    </radialGradient>
+
+    <linearGradient id="sunBody" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#fff3a8"/>
+      <stop offset="0.45" stop-color="#ffb347"/>
+      <stop offset="0.8" stop-color="#ff5a8a"/>
+      <stop offset="1" stop-color="#ff2f87"/>
+    </linearGradient>
+
+    <linearGradient id="water" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#1b2c78"/>
+      <stop offset="0.35" stop-color="#0f1d55"/>
+      <stop offset="1" stop-color="#050a2b"/>
+    </linearGradient>
+
+    <mask id="sunStripes">
+      <rect x="0" y="0" width="1600" height="900" fill="#fff"/>
+      <g fill="#000">
+        <rect x="480" y="500" width="640" height="9"/>
+        <rect x="480" y="524" width="640" height="12"/>
+        <rect x="480" y="551" width="640" height="15"/>
+        <rect x="480" y="582" width="640" height="19"/>
+        <rect x="480" y="618" width="640" height="24"/>
+      </g>
+    </mask>
+
+    <g id="frond">
+      <path d="M0,0 C 50,-8 100,4 152,32 C 106,26 54,18 0,0 Z"/>
+    </g>
+
+    <g id="palm">
+      <path d="M0,0 C -8,-64 -18,-128 -8,-196 C -3,-232 6,-258 18,-278"
+            fill="none" stroke="#050a2a" stroke-width="15" stroke-linecap="round"/>
+      <g fill="#050a2a" transform="translate(18,-278)">
+        <use href="#frond" transform="rotate(0) scale(1)"/>
+        <use href="#frond" transform="rotate(38) scale(0.95)"/>
+        <use href="#frond" transform="rotate(76) scale(0.9)"/>
+        <use href="#frond" transform="rotate(114) scale(0.9)"/>
+        <use href="#frond" transform="rotate(152) scale(0.95)"/>
+        <use href="#frond" transform="rotate(190) scale(1)"/>
+        <use href="#frond" transform="rotate(228) scale(0.92)"/>
+        <use href="#frond" transform="rotate(266) scale(0.86)"/>
+        <use href="#frond" transform="rotate(304) scale(0.9)"/>
+        <use href="#frond" transform="rotate(342) scale(0.95)"/>
+      </g>
+    </g>
+
+    <g id="star" fill="#ffffff">
+      <circle r="2"/>
+    </g>
+  </defs>
+
+  <!-- sky -->
+  <rect x="0" y="0" width="1600" height="640" fill="url(#sky)"/>
+
+  <!-- stars -->
+  <g opacity="0.75">
+    <use href="#star" x="140" y="90"/>
+    <use href="#star" x="320" y="52" opacity="0.7"/>
+    <use href="#star" x="520" y="120" opacity="0.55"/>
+    <use href="#star" x="760" y="66" opacity="0.8"/>
+    <use href="#star" x="980" y="140" opacity="0.6"/>
+    <use href="#star" x="1180" y="70" opacity="0.75"/>
+    <use href="#star" x="1360" y="128" opacity="0.5"/>
+    <use href="#star" x="1500" y="60" opacity="0.7"/>
+    <use href="#star" x="240" y="200" opacity="0.45"/>
+    <use href="#star" x="900" y="30" opacity="0.6"/>
+    <use href="#star" x="1300" y="220" opacity="0.4"/>
+  </g>
+
+  <!-- sun glow + sun -->
+  <circle cx="800" cy="640" r="520" fill="url(#sunGlow)"/>
+  <g mask="url(#sunStripes)">
+    <circle cx="800" cy="640" r="230" fill="url(#sunBody)"/>
+  </g>
+
+  <!-- ocean -->
+  <rect x="0" y="640" width="1600" height="260" fill="url(#water)"/>
+
+  <!-- sunset reflection on the water -->
+  <g opacity="0.55">
+    <rect x="700" y="648" width="200" height="6" rx="3" fill="#ffc46b"/>
+    <rect x="672" y="666" width="256" height="7" rx="3" fill="#ff8fb8"/>
+    <rect x="642" y="686" width="316" height="8" rx="4" fill="#ff5fb4"/>
+    <rect x="606" y="710" width="388" height="9" rx="4" fill="#38d7da"/>
+    <rect x="562" y="738" width="476" height="10" rx="5" fill="#2bb6d8" opacity="0.8"/>
+  </g>
+
+  <!-- retro grid on the water -->
+  <g stroke="#5df3ff" stroke-width="1.4" opacity="0.28">
+    <line x1="800" y1="640" x2="240" y2="900"/>
+    <line x1="800" y1="640" x2="420" y2="900"/>
+    <line x1="800" y1="640" x2="600" y2="900"/>
+    <line x1="800" y1="640" x2="800" y2="900"/>
+    <line x1="800" y1="640" x2="1000" y2="900"/>
+    <line x1="800" y1="640" x2="1180" y2="900"/>
+    <line x1="800" y1="640" x2="1360" y2="900"/>
+    <line x1="0" y1="640" x2="1600" y2="640"/>
+    <line x1="0" y1="672" x2="1600" y2="672"/>
+    <line x1="0" y1="712" x2="1600" y2="712"/>
+    <line x1="0" y1="762" x2="1600" y2="762"/>
+    <line x1="0" y1="824" x2="1600" y2="824"/>
+  </g>
+
+  <!-- city skyline on the horizon -->
+  <g fill="#0a1440" opacity="0.95">
+    <rect x="0" y="596" width="90" height="44"/>
+    <rect x="120" y="578" width="60" height="62"/>
+    <rect x="210" y="606" width="120" height="34"/>
+    <rect x="350" y="588" width="70" height="52"/>
+    <rect x="1150" y="590" width="80" height="50"/>
+    <rect x="1250" y="572" width="54" height="68"/>
+    <rect x="1330" y="600" width="110" height="40"/>
+    <rect x="1470" y="584" width="66" height="56"/>
+    <rect x="1560" y="606" width="40" height="34"/>
+  </g>
+
+  <!-- palm trees -->
+  <use href="#palm" transform="translate(140,900) scale(1.35)"/>
+  <use href="#palm" transform="translate(30,900) scale(0.95)"/>
+  <use href="#palm" transform="translate(1330,900) scale(1.25)"/>
+  <use href="#palm" transform="translate(1500,900) scale(0.9)"/>
+  <use href="#palm" transform="translate(1180,900) scale(0.72)"/>
+
+  <!-- cinematic vignette -->
+  <rect x="0" y="0" width="1600" height="900" fill="url(#water)" opacity="0"/>
+</svg>

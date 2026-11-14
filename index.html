@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#050a2b" />
+  <meta name="description" content="Grand Theft Auto VI fan countdown to release — official trailers, a neon Vice City countdown and fresh daily quotes." />
+  <title>GTA VI · Vice City Countdown</title>
+
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23050a2b'/%3E%3Ctext x='32' y='45' font-family='Arial Black,Arial' font-size='30' font-weight='900' text-anchor='middle' fill='%23ff2e9a'%3EVI%3C/text%3E%3C/svg%3E" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Kaushan+Script&family=Monoton&family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <!-- Ambient neon background -->
+  <div class="backdrop" aria-hidden="true">
+    <span class="backdrop__glow backdrop__glow--cyan"></span>
+    <span class="backdrop__glow backdrop__glow--pink"></span>
+    <span class="backdrop__grid"></span>
+  </div>
+
+  <!-- ===== Header ===== -->
+  <header class="site-header">
+    <a class="brand" href="#top" aria-label="GTA VI Countdown — back to top">
+      <span class="brand__mark">VI</span>
+      <span class="brand__text">
+        <span class="brand__title">Grand Theft Auto</span>
+        <span class="brand__sub">Vice City Countdown</span>
+      </span>
+    </a>
+
+    <div class="today" title="Today's date">
+      <span class="today__label">Today</span>
+      <time id="dateValue" datetime="">—</time>
+    </div>
+  </header>
+
+  <main id="top">
+    <!-- ===== A. Trailers ===== -->
+    <section class="section trailers" id="trailers" aria-labelledby="trailersTitle">
+      <div class="section__head">
+        <p class="eyebrow">Official · Rockstar Games</p>
+        <h2 class="section__title" id="trailersTitle">GTA VI <span class="accent">Trailers</span></h2>
+      </div>
+
+      <div class="trailer-grid" id="trailerGrid">
+        <figure class="trailer">
+          <div class="video-frame">
+            <iframe
+              src="https://www.youtube-nocookie.com/embed/VQRLujxTm3c"
+              title="Grand Theft Auto VI — Trailer 2"
+              loading="lazy"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+              referrerpolicy="strict-origin-when-cross-origin"
+              allowfullscreen></iframe>
+          </div>
+          <figcaption class="trailer__caption">
+            <span class="trailer__no">Trailer 02</span>
+            <span class="trailer__name">Grand Theft Auto VI — Trailer 2</span>
+          </figcaption>
+        </figure>
+
+        <figure class="trailer">
+          <div class="video-frame">
+            <iframe
+              src="https://www.youtube-nocookie.com/embed/QdBZY2fkU-0"
+              title="Grand Theft Auto VI — Trailer 1"
+              loading="lazy"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+              referrerpolicy="strict-origin-when-cross-origin"
+              allowfullscreen></iframe>
+          </div>
+          <figcaption class="trailer__caption">
+            <span class="trailer__no">Trailer 01</span>
+            <span class="trailer__name">Grand Theft Auto VI — Trailer 1</span>
+          </figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <!-- ===== B. Countdown ===== -->
+    <section class="hero" id="countdown" aria-labelledby="heroTitle">
+      <div class="hero__bg" aria-hidden="true"></div>
+      <div class="hero__overlay" aria-hidden="true"></div>
+
+      <div class="hero__inner">
+        <p class="eyebrow eyebrow--glow">Welcome to Leonida</p>
+
+        <h1 class="vice-logo" id="heroTitle">
+          <span class="vice-logo__grand">Grand Theft Auto</span>
+          <span class="vice-logo__vi">VI</span>
+        </h1>
+
+        <p class="hero__sub">Countdown to release</p>
+
+        <div class="countdown" id="countdownTimer" role="timer" aria-live="off">
+          <div class="unit">
+            <span class="unit__value" id="unitDays">00</span>
+            <span class="unit__label">Days</span>
+          </div>
+          <div class="unit">
+            <span class="unit__value" id="unitHours">00</span>
+            <span class="unit__label">Hours</span>
+          </div>
+          <div class="unit">
+            <span class="unit__value" id="unitMinutes">00</span>
+            <span class="unit__label">Minutes</span>
+          </div>
+          <div class="unit">
+            <span class="unit__value" id="unitSeconds">00</span>
+            <span class="unit__label">Seconds</span>
+          </div>
+        </div>
+
+        <p class="hero__release" id="releaseLabel">Releases 19 November 2026</p>
+
+        <div class="here" id="hereMessage" hidden>
+          <span class="here__text">GTA VI IS HERE!</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== C & D. Quotes ===== -->
+    <section class="section quotes" id="quotes" aria-labelledby="quotesTitle">
+      <div class="section__head">
+        <p class="eyebrow">A thought for the road</p>
+        <h2 class="section__title" id="quotesTitle">Daily <span class="accent">Quote</span></h2>
+      </div>
+
+      <div class="quote-card">
+        <span class="quote-card__mark" aria-hidden="true">&ldquo;</span>
+
+        <blockquote class="quote">
+          <p class="quote__text" id="quoteText">Loading today's quote…</p>
+          <footer class="quote__author">
+            <span class="quote__dash">—</span>
+            <span id="quoteAuthor">the Stoics</span>
+          </footer>
+        </blockquote>
+
+        <p class="quote__error" id="quoteError" role="alert" hidden></p>
+
+        <button class="diamond" id="newQuoteBtn" type="button" aria-label="Show a new quote">
+          <span class="diamond__face">
+            <svg class="diamond__icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+              <path d="M20 11a8 8 0 1 0-2.3 6.3M20 5v6h-6"
+                    fill="none" stroke="currentColor" stroke-width="2.1"
+                    stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </span>
+        </button>
+        <p class="quote__hint">New quote</p>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <p>Unofficial fan project · Not affiliated with Rockstar Games or Take-Two Interactive.</p>
+    <p>Quotes powered by <a href="https://stoic.tekloon.net/stoic-quote" target="_blank" rel="noopener noreferrer">stoic.tekloon.net</a></p>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
