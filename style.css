@@ -2,8 +2,8 @@
    GTA VI · Vice City Countdown — stylesheet
    Sections: 1) tokens 2) base 3) backdrop 4) header 5) shared section chrome
              6) cinematic key-art banner 7) trailers 8) countdown hero
-             9) quotes + diamond button 10) footer 11) animations
-             12) background music player 13) responsive
+             9) quotes + diamond button 10) explore Leonida map 11) footer
+             12) animations 13) background music player 14) responsive
    ========================================================================== */
 
 /* 1) Design tokens ------------------------------------------------------- */
@@ -726,18 +726,257 @@ a { color: var(--turquoise); }
   color: var(--muted);
 }
 
-/* 10) Footer ------------------------------------------------------------- */
+/* 10) Explore Leonida — map viewer --------------------------------------- */
+/* The map card fades and rises into view the first time it is scrolled to.
+   The hidden start state is scoped to html.js so the map is never invisible
+   when scripting is unavailable. */
+.map-shell {
+  position: relative;
+  padding: clamp(0.85rem, 2vw, 1.35rem);
+  border-radius: calc(var(--radius) + 6px);
+  background:
+    radial-gradient(120% 120% at 12% 0%, rgba(255, 46, 154, 0.16), transparent 58%),
+    radial-gradient(120% 120% at 88% 100%, rgba(46, 230, 230, 0.16), transparent 58%),
+    linear-gradient(160deg, rgba(8, 19, 56, 0.94), rgba(3, 6, 28, 0.97));
+  border: 1px solid rgba(46, 230, 230, 0.32);
+  box-shadow:
+    0 24px 60px rgba(3, 6, 28, 0.65),
+    inset 0 0 32px rgba(46, 230, 230, 0.1);
+  transition: opacity 0.8s ease, transform 0.8s cubic-bezier(0.22, 1, 0.36, 1),
+              border-color 0.6s ease, box-shadow 0.6s ease;
+}
+
+html.js .map-shell[data-reveal] {
+  opacity: 0;
+  transform: translateY(34px) scale(0.985);
+}
+
+.map-shell.is-revealed,
+html.js .map-shell[data-reveal].is-revealed {
+  opacity: 1;
+  transform: none;
+  border-color: rgba(255, 46, 154, 0.45);
+  box-shadow:
+    0 24px 60px rgba(3, 6, 28, 0.7),
+    0 0 34px rgba(255, 46, 154, 0.32),
+    inset 0 0 32px rgba(46, 230, 230, 0.12);
+}
+
+/* Toolbar --------------------------------------------------------------- */
+.map-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: clamp(0.6rem, 1.6vw, 0.9rem);
+}
+
+.map-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 42px;
+  height: 42px;
+  padding: 0 0.7rem;
+  font-family: var(--font-display);
+  font-size: 1.4rem;
+  letter-spacing: 1.5px;
+  line-height: 1;
+  color: var(--white);
+  cursor: pointer;
+  border: 1px solid rgba(46, 230, 230, 0.45);
+  border-radius: 12px;
+  background: linear-gradient(160deg, rgba(11, 27, 77, 0.95), rgba(5, 10, 43, 0.95));
+  box-shadow: inset 0 0 12px rgba(46, 230, 230, 0.14);
+  transition: transform 0.2s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+}
+
+.map-btn--wide { font-size: 1.05rem; letter-spacing: 1px; padding: 0 0.9rem; }
+
+.map-btn:hover,
+.map-btn:focus-visible {
+  border-color: var(--pink);
+  transform: translateY(-1px);
+  box-shadow: 0 0 16px rgba(255, 46, 154, 0.55), inset 0 0 14px rgba(255, 46, 154, 0.2);
+}
+
+.map-btn:active { transform: scale(0.96); }
+.map-btn:focus-visible { outline: 2px solid var(--turquoise); outline-offset: 2px; }
+
+.map-hint {
+  margin-left: auto;
+  font-size: 0.66rem;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+/* Map surface ------------------------------------------------------------ */
+.map-viewport {
+  position: relative;
+  width: min(100%, 86vh, 980px);
+  margin-inline: auto;
+  aspect-ratio: 1 / 1;
+  overflow: hidden;
+  border-radius: var(--radius);
+  background: radial-gradient(120% 120% at 50% 0%, rgba(14, 111, 174, 0.35), rgba(3, 6, 28, 0.95));
+  border: 1px solid rgba(46, 230, 230, 0.4);
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 46, 154, 0.18),
+    inset 0 0 46px rgba(3, 6, 28, 0.9),
+    0 0 26px rgba(46, 230, 230, 0.18);
+  cursor: grab;
+  touch-action: none;          /* the viewer handles pan and pinch itself */
+  overscroll-behavior: contain;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.map-viewport.is-dragging { cursor: grabbing; }
+
+.map-image {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  transform-origin: 50% 50%;
+  transition: transform 0.26s cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: transform;
+  pointer-events: none;        /* the viewport handles every gesture */
+}
+
+.map-viewport.is-dragging .map-image { transition: none; }
+
+.map-empty {
+  position: absolute;
+  inset: auto clamp(1rem, 4vw, 3rem) auto;
+  top: 50%;
+  transform: translateY(-50%);
+  margin: 0;
+  padding: 0.8rem 1rem;
+  border-radius: 12px;
+  text-align: center;
+  font-size: 0.85rem;
+  color: #ffe3f2;
+  background: rgba(194, 0, 111, 0.28);
+  border: 1px solid rgba(255, 46, 154, 0.5);
+}
+
+/* Provenance and credits ------------------------------------------------ */
+.map-credit {
+  margin-top: clamp(0.9rem, 2vw, 1.25rem);
+  font-size: 0.82rem;
+  line-height: 1.7;
+  color: rgba(255, 255, 255, 0.78);
+}
+
+.map-credit p { margin: 0 0 0.6rem; }
+.map-credit p:last-child { margin-bottom: 0; }
+.map-credit strong { color: var(--white); }
+.map-credit em { font-style: normal; color: var(--pink-soft); }
+
+.map-credit a {
+  color: var(--turquoise);
+  text-decoration: none;
+  border-bottom: 1px solid rgba(46, 230, 230, 0.4);
+}
+
+.map-credit a:hover,
+.map-credit a:focus-visible { color: var(--white); border-color: var(--pink); }
+
+.map-credit__note { font-size: 0.75rem; color: rgba(255, 255, 255, 0.6); }
+
+/* Fullscreen mode (Fullscreen API, button in the toolbar) ----------------- */
+.map-shell:fullscreen {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  padding: clamp(0.6rem, 2vw, 1.2rem);
+  border-radius: 0;
+  background: linear-gradient(160deg, #081338, #03061c);
+}
+
+.map-shell:-webkit-full-screen {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  padding: clamp(0.6rem, 2vw, 1.2rem);
+  border-radius: 0;
+  background: linear-gradient(160deg, #081338, #03061c);
+}
+
+.map-shell:fullscreen .map-viewport,
+.map-shell:-webkit-full-screen .map-viewport {
+  flex: 1 1 auto;
+  width: 100%;
+  max-height: none;
+  aspect-ratio: auto;
+  margin: 0;
+}
+
+.map-shell:fullscreen .map-credit,
+.map-shell:-webkit-full-screen .map-credit {
+  margin-top: 0.75rem;
+  font-size: 0.78rem;
+}
+
+/* 11) Footer ------------------------------------------------------------- */
 .site-footer {
-  padding: 2.5rem clamp(1rem, 4vw, 2rem) 3rem;
+  position: relative;
+  padding: 3.25rem clamp(1rem, 4vw, 2rem) 3rem;
   text-align: center;
   font-size: 0.78rem;
   color: rgba(255, 255, 255, 0.55);
+  background: linear-gradient(180deg, rgba(5, 10, 43, 0), rgba(3, 6, 28, 0.94));
   border-top: 1px solid rgba(46, 230, 230, 0.18);
+}
+
+/* Thin neon divider sitting on the footer's top edge. */
+.site-footer::before {
+  content: "";
+  position: absolute;
+  top: -1px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: min(100%, var(--wrap));
+  height: 2px;
+  border-radius: 999px;
+  background: linear-gradient(90deg,
+    rgba(46, 230, 230, 0) 0%, var(--turquoise) 22%, var(--pink) 50%,
+    var(--turquoise) 78%, rgba(46, 230, 230, 0) 100%);
+  box-shadow: 0 0 12px rgba(255, 46, 154, 0.75), 0 0 28px rgba(46, 230, 230, 0.45);
+}
+
+.site-footer__credit { margin-bottom: 1.6rem; }
+
+.site-footer__created {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: clamp(1.5rem, 5vw, 2.4rem);
+  letter-spacing: clamp(3px, 1.2vw, 7px);
+  line-height: 1.1;
+  color: var(--white);
+  text-shadow:
+    0 0 10px rgba(255, 46, 154, 0.85),
+    0 0 30px rgba(255, 46, 154, 0.5),
+    0 0 46px rgba(46, 230, 230, 0.4);
+}
+
+.site-footer__sub {
+  margin: 0.5rem 0 0;
+  font-size: clamp(0.62rem, 2.2vw, 0.74rem);
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  color: var(--pink-soft);
+  text-shadow: 0 0 10px rgba(255, 46, 154, 0.4);
 }
 
 .site-footer p { margin: 0.25rem 0; }
 
-/* 11) Animations --------------------------------------------------------- */
+/* 12) Animations --------------------------------------------------------- */
 @keyframes kenburns {
   from { transform: scale(1.04) translate3d(0, 0, 0); }
   to   { transform: scale(1.16) translate3d(-1.5%, -1.5%, 0); }
@@ -778,7 +1017,7 @@ a { color: var(--turquoise); }
   html { scroll-behavior: auto; }
 }
 
-/* 12) Official music player ---------------------------------------------- */
+/* 13) Official music player (audio only) --------------------------------- */
 .player {
   position: fixed;
   right: clamp(0.75rem, 2.2vw, 1.5rem);
@@ -809,39 +1048,36 @@ a { color: var(--turquoise); }
     0 0 26px rgba(255, 46, 154, 0.4);
 }
 
-/* The official YouTube frame. YouTube's rules require it to stay visible while
-   it plays, so it opens on the first press of Play (script.js adds .is-engaged)
-   and stays open from then on. Keeping it closed until then leaves the card at
-   its original compact size instead of covering the page on phones. */
+/* The official player itself, kept to a slim audio bar: this card is audio
+   only, so there is no video frame and no thumbnail — just the licensed
+   playback source, which script.js drives through SoundCloud's Widget API. */
 .player__stage {
-  display: none;
-  position: relative;
-  aspect-ratio: 16 / 9;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  padding: 0.45rem 0.45rem 0.4rem;
   border-radius: 10px;
-  overflow: hidden;
-  background: rgba(3, 8, 30, 0.92);
+  background: rgba(3, 8, 30, 0.9);
   box-shadow:
-    inset 0 0 0 1px rgba(46, 230, 230, 0.35),
-    0 0 14px rgba(46, 230, 230, 0.16);
+    inset 0 0 0 1px rgba(46, 230, 230, 0.3),
+    0 0 12px rgba(46, 230, 230, 0.12);
 }
 
-.player.is-engaged .player__stage {
+.player__stage-label {
+  font-size: 0.5rem;
+  letter-spacing: 2.5px;
+  text-transform: uppercase;
+  color: var(--turquoise);
+  opacity: 0.85;
+}
+
+.player__audio {
   display: block;
-  animation: stageOpen 0.45s cubic-bezier(0.22, 1, 0.36, 1) both;
-}
-
-@keyframes stageOpen {
-  from { opacity: 0; transform: translateY(10px) scaleY(0.9); }
-  to   { opacity: 1; transform: none; }
-}
-
-/* Covers both the placeholder div and the iframe YouTube swaps in for it. */
-.player__stage > * {
-  position: absolute;
-  inset: 0;
-  width: 100% !important;
-  height: 100% !important;
+  width: 100%;
+  height: 34px;
   border: 0;
+  border-radius: 6px;
+  background: transparent;
 }
 
 .player__row { display: flex; align-items: center; gap: 0.6rem; }
@@ -907,14 +1143,6 @@ a { color: var(--turquoise); }
 }
 
 .player__external { color: var(--turquoise); }
-
-.player__stage .player__external {
-  display: grid;
-  place-items: center;
-  padding: 0.5rem;
-  font-size: 0.72rem;
-  text-align: center;
-}
 
 .player__now { margin: 0; display: flex; align-items: center; gap: 0.5rem; }
 
@@ -1001,12 +1229,11 @@ a { color: var(--turquoise); }
 .player__error { margin: 0; font-size: 0.72rem; color: var(--pink-soft); }
 .player.has-error .player__eq { display: none; }
 
-/* The player is fixed, so the footer needs room to clear it once the official
-   frame is open (about 306px tall on desktop, 279px on phones, including the
-   fallback line if YouTube cannot load). */
-.site-footer { padding-bottom: 19.5rem; }
+/* The player is fixed, so the footer keeps room to clear it (the card is about
+   185px tall, including the slim official audio bar). */
+.site-footer { padding-bottom: 13.5rem; }
 
-/* 13) Responsive --------------------------------------------------------- */
+/* 14) Responsive --------------------------------------------------------- */
 @media (max-width: 900px) {
   .trailer-grid { grid-template-columns: minmax(0, 1fr); }
   .hero { min-height: auto; }
@@ -1027,16 +1254,23 @@ a { color: var(--turquoise); }
   .quote-card__mark { font-size: 5rem; }
   .diamond { width: 72px; height: 72px; }
   .diamond__icon { width: 26px; height: 26px; }
+  .map-hint { display: none; }
+  .map-credit { font-size: 0.8rem; }
 }
 
 @media (max-width: 430px) {
-  /* Keeps the official frame at roughly YouTube's own 200px embed width. */
+  /* The player card stays narrow enough to leave the page readable. */
   .player { width: min(224px, calc(100vw - 1rem)); gap: 0.5rem; padding: 0.6rem; }
-  .site-footer { padding-bottom: 18rem; }
+  .site-footer { padding-bottom: 14.5rem; }
   .player__toggle { width: 42px; height: 42px; }
   .player__glyph { width: 20px; height: 20px; }
   .player__label { letter-spacing: 2px; }
   .player__title { font-size: 0.78rem; }
+  .map-toolbar { gap: 0.4rem; }
+  .map-btn { min-width: 38px; height: 38px; font-size: 1.2rem; }
+  .map-btn--wide { font-size: 0.92rem; letter-spacing: 0.5px; padding: 0 0.6rem; }
+  .map-credit { font-size: 0.78rem; }
+  .site-footer__sub { letter-spacing: 3px; }
 }
 
 @media (max-width: 380px) {

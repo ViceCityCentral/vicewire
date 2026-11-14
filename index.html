@@ -192,30 +192,84 @@
         <p class="quote__hint">New quote</p>
       </div>
     </section>
+
+    <!-- ===== Explore Leonida — the Collector's Edition map of the state ===== -->
+    <section class="section leonida" id="map" aria-labelledby="mapTitle">
+      <div class="section__head">
+        <p class="eyebrow">The Goodtime State</p>
+        <h2 class="section__title" id="mapTitle">EXPLORE <span class="accent">LEONIDA</span></h2>
+      </div>
+
+      <div class="map-shell" id="mapShell" data-reveal>
+        <div class="map-toolbar" role="group" aria-label="Map controls">
+          <button class="map-btn" id="mapZoomIn" type="button" aria-label="Zoom in">+</button>
+          <button class="map-btn" id="mapZoomOut" type="button" aria-label="Zoom out">−</button>
+          <button class="map-btn map-btn--wide" id="mapReset" type="button">Reset view</button>
+          <button class="map-btn map-btn--wide" id="mapFull" type="button" aria-pressed="false">Fullscreen</button>
+          <span class="map-hint" id="mapHint">Drag to pan · scroll, pinch or double-click to zoom</span>
+        </div>
+
+        <div class="map-viewport" id="mapViewport" tabindex="0"
+             aria-label="Map of Leonida: drag to pan, use plus and minus to zoom, 0 to reset">
+          <picture>
+            <source srcset="assets/gta-vi-leonida-map.webp" type="image/webp" />
+            <img class="map-image" id="mapImage"
+                 src="assets/gta-vi-leonida-map.jpg"
+                 alt="Illustrated map of the state of Leonida, with Vice City, from the Grand Theft Auto VI Collector's Edition souvenir poster"
+                 width="1440" height="1440" loading="lazy" decoding="async" draggable="false" />
+          </picture>
+          <p class="map-empty" id="mapEmpty" hidden>
+            The map image could not load — check your connection and reload the page.
+          </p>
+        </div>
+
+        <div class="map-credit">
+          <p>
+            <strong>Where this map comes from:</strong> it is the map artwork printed on the back of
+            the <em>Double-Sided Souvenir Poster with Map of Leonida</em>, which ships inside
+            <em>Grand Theft Auto VI: The Goodtime State – Vice City™ Collection</em> — taken from
+            <a href="https://store.rockstargames.com/merchandise/gtavi-goodtime-state-vice-city-collection" target="_blank" rel="noopener noreferrer">Rockstar Games' own store</a>.
+          </p>
+          <p>
+            Rockstar Games has not published an interactive map of Leonida, so the zoom, pan and
+            fullscreen viewer above is this fan site's own — it is not an official map tool and it
+            shows nothing from the leaked material.
+          </p>
+          <p class="map-credit__note">
+            Unofficial fan project · not affiliated with Rockstar Games or Take-Two Interactive.
+            Community-made interactive maps, if you want street-level detail:
+            <a href="https://www.gtabase.com/gta-6/map/" target="_blank" rel="noopener noreferrer">GTABase</a> ·
+            <a href="https://map.stateofleonida.net" target="_blank" rel="noopener noreferrer">State of Leonida</a>
+            — both unofficial and unconnected to this site.
+          </p>
+        </div>
+      </div>
+    </section>
   </main>
 
   <footer class="site-footer">
+    <div class="site-footer__credit">
+      <p class="site-footer__created">CREATED BY BILL PATELIS</p>
+      <p class="site-footer__sub">An unofficial Grand Theft Auto VI fan project</p>
+    </div>
     <p>Unofficial fan project · Not affiliated with Rockstar Games or Take-Two Interactive.</p>
     <p>Quotes powered by <a href="https://stoic.tekloon.net/stoic-quote" target="_blank" rel="noopener noreferrer">stoic.tekloon.net</a></p>
   </footer>
 
-  <!-- ===== Background music player ===== -->
+  <!-- ===== Background music player (audio only) ===== -->
   <aside class="player" id="musicPlayer" aria-label="Official GTA VI music">
-    <!-- Officially released GTA VI music through YouTube's own embed — nothing is
-         bundled, downloaded or re-uploaded. "Flower In A Hurricane" by Justice
+    <!-- Officially released GTA VI music, streamed from the rights holders' own
+         upload through SoundCloud's official player — nothing is bundled,
+         downloaded or re-uploaded, and this card is audio only: no video
+         preview, no artwork, no video frame. "Flower In A Hurricane" by Justice
          feat. Tame Impala, SZA and King Gizzard & the Lizard Wizard is the first
          single from the game (Ed Banger / Because / Take-Two, released
-         15 October 2026) and this frame is the upload on Justice's own channel.
-         YouTube's rules require the player to stay visible while it plays, so the
-         frame opens inside this card on the first press of Play and stays there.
-         Change music.videoId in script.js to play another track. -->
+         15 October 2026) and the track below is Justice's own upload.
+         Change music.trackUrl / music.title in script.js for another track. -->
     <noscript>
-      <a class="player__external" href="https://www.youtube.com/watch?v=5dPwBWvmcbQ"
-         target="_blank" rel="noopener noreferrer">Official track on YouTube</a>
+      <a class="player__external" href="https://soundcloud.com/justice-official/flower-in-a-hurricane-feat"
+         target="_blank" rel="noopener noreferrer">Official track on SoundCloud</a>
     </noscript>
-    <div class="player__stage">
-      <div class="player__frame" id="musicFrame"></div>
-    </div>
 
     <div class="player__row">
       <button class="player__toggle" id="musicToggle" type="button" aria-pressed="false"
@@ -246,10 +300,20 @@
       </label>
     </div>
 
+    <!-- The official player itself, kept to a slim audio bar: no video, no artwork.
+         script.js drives it (play/pause, volume) through SoundCloud's Widget API. -->
+    <div class="player__stage">
+      <span class="player__stage-label">Official audio</span>
+      <iframe id="musicFrame" class="player__audio"
+              title="Official GTA VI music — Flower In A Hurricane by Justice"
+              scrolling="no" frameborder="no" allow="autoplay"
+              src="https://w.soundcloud.com/player/?url=https%3A%2F%2Fapi.soundcloud.com%2Ftracks%2F2418269610&amp;color=%23ff2e9a&amp;auto_play=false&amp;hide_related=true&amp;show_comments=false&amp;show_user=false&amp;show_artwork=false&amp;show_playcount=false&amp;show_reposts=false&amp;show_teaser=false&amp;sharing=false&amp;download=false&amp;buying=false&amp;liking=false&amp;visual=false"></iframe>
+    </div>
+
     <p class="player__error" id="musicError" role="alert" hidden>
       Official music can't load right now —
-      <a class="player__external" href="https://www.youtube.com/watch?v=5dPwBWvmcbQ"
-         target="_blank" rel="noopener noreferrer">open the track on YouTube</a>.
+      <a class="player__external" href="https://soundcloud.com/justice-official/flower-in-a-hurricane-feat"
+         target="_blank" rel="noopener noreferrer">open the track on SoundCloud</a>.
     </p>
   </aside>
 
