@@ -32,7 +32,25 @@
     proxyTimeout: 12000,
 
     // Fade duration between two quotes (must match the CSS 0.4s).
-    fadeMs: 400
+    fadeMs: 400,
+
+    /* Officially released GTA VI music, played through YouTube's official
+       embed. No audio file is bundled, downloaded or re-uploaded — the track
+       streams from the rights holders' own upload, and YouTube's player stays
+       visible in the card while it plays, as their rules require.
+
+       "Flower In A Hurricane" — Justice featuring Tame Impala, SZA and King
+       Gizzard & the Lizard Wizard — is the first single from the game
+       (Ed Banger / Because / Take-Two, released 15 October 2026) and the id
+       below is the upload on Justice's own channel.
+
+       Swap videoId/title for another official upload and everything else
+       (title, volume, play state) follows. */
+    music: {
+      videoId: "5dPwBWvmcbQ",
+      title: "Flower In A Hurricane — Justice",
+      volume: 45   // YouTube volume, 0-100
+    }
   };
 
   // ?date=YYYY-MM-DD overrides the release date — handy for previewing the
@@ -250,27 +268,34 @@
     }
   }
 
-  /* 5) Background music player ------------------------------------------- */
+  /* 5) Official music player ---------------------------------------------
+     Drives YouTube's own embedded player through the IFrame Player API, so the
+     music is streamed from the rights holder's upload instead of a bundled
+     file. The custom play/pause button, volume slider and equaliser all mirror
+     the official player's real state. */
   function initMusicPlayer() {
     const player = $("musicPlayer");
-    const audio = $("musicAudio");
+    const frame = $("musicFrame");
     const toggle = $("musicToggle");
     const volume = $("musicVolume");
     const error = $("musicError");
-    if (!player || !audio || !toggle) return;
+    const title = $("musicTitle");
+    if (!player || !frame || !toggle) return;
 
-    function clampVolume(value) {
-      const v = Number(value);
-      return Number.isFinite(v) ? Math.min(1, Math.max(0, v)) : 1;
-    }
+    const toSlider = (v) => Math.min(1, Math.max(0, v / 100));
+    const toPlayer = (v) => Math.round(Math.min(1, Math.max(0, Number(v) || 0)) * 100);
 
-    audio.loop = true;
-    if (volume) audio.volume = clampVolume(volume.value);
+    let ytPlayer = null;
+    let ready = false;
+    let apiBroken = false;
+    let playWhenReady = false;
+
+    if (volume) volume.value = toSlider(CONFIG.music.volume);
 
     function setPlaying(isPlaying) {
       player.classList.toggle("is-playing", isPlaying);
       toggle.setAttribute("aria-pressed", String(isPlaying));
-      toggle.setAttribute("aria-label", (isPlaying ? "Pause" : "Play") + " background music");
+      toggle.setAttribute("aria-label", (isPlaying ? "Pause" : "Play") + " official GTA VI music");
     }
 
     function showMusicError() {
@@ -278,37 +303,113 @@
       if (error) error.hidden = false;
     }
 
-    // Browsers block autoplay, so the track only ever starts from this click.
-    function togglePlayback() {
-      if (audio.paused) {
-        const started = audio.play();
-        if (started && typeof started.catch === "function") started.catch(showMusicError);
-      } else {
-        audio.pause();
+    function clearMusicError() {
+      player.classList.remove("has-error");
+      if (error) error.hidden = true;
+    }
+
+    /* Read the real title from YouTube's oEmbed endpoint (CORS-enabled) so the
+       card always names what is playing; the config title is the fallback. */
+    function loadOfficialTitle() {
+      if (!title || typeof fetch !== "function") return;
+      const url = "https://www.youtube.com/oembed?format=json&url=" +
+        encodeURIComponent("https://www.youtube.com/watch?v=" + CONFIG.music.videoId);
+      fetch(url)
+        .then((res) => (res.ok ? res.json() : Promise.reject(new Error("HTTP " + res.status))))
+        .then((data) => { if (data && data.title) title.textContent = data.title; })
+        .catch(() => { /* keep the configured title */ });
+    }
+
+    function createPlayer() {
+      if (ytPlayer || apiBroken || !window.YT || !window.YT.Player) return;
+
+      const vars = {
+        controls: 1,     // YouTube's own controls stay available and intact
+        rel: 0,
+        playsinline: 1,
+        loop: 1,
+        playlist: CONFIG.music.videoId   // YouTube needs this to loop one video
+      };
+      // The API warns about the origin parameter on file:// pages.
+      if (location.protocol === "http:" || location.protocol === "https:") {
+        vars.origin = location.origin;
       }
+
+      ytPlayer = new window.YT.Player("musicFrame", {
+        videoId: CONFIG.music.videoId,
+        playerVars: vars,
+        events: {
+          onReady: function () {
+            ready = true;
+            ytPlayer.setVolume(CONFIG.music.volume);
+            if (playWhenReady) {          // the visitor clicked before we were ready
+              playWhenReady = false;
+              ytPlayer.playVideo();
+            }
+          },
+          onStateChange: function (event) {
+            const states = window.YT.PlayerState;
+            if (event.data === states.PLAYING) {
+              setPlaying(true);
+              clearMusicError();
+            } else if (event.data === states.PAUSED || event.data === states.ENDED) {
+              setPlaying(false);
+            }
+          },
+          onError: function () {
+            playWhenReady = false;
+            setPlaying(false);
+            showMusicError();
+          }
+        }
+      });
+    }
+
+    // Warm the API script so the first press of Play answers quickly.
+    function preloadApi() {
+      if (window.YT || apiBroken || document.getElementById("ytIframeApi")) return;
+      const script = document.createElement("script");
+      script.id = "ytIframeApi";
+      script.src = "https://www.youtube.com/iframe_api";
+      script.onerror = function () { apiBroken = true; };
+      document.head.appendChild(script);
+    }
+
+    // Loaded on first need; the API calls onYouTubeIframeAPIReady when ready.
+    function loadApi() {
+      if (window.YT && window.YT.Player) { createPlayer(); return; }
+      if (apiBroken) { showMusicError(); return; }
+      preloadApi();
+      window.onYouTubeIframeAPIReady = createPlayer;
+    }
+
+    // Nothing plays on its own: playback always starts from this click.
+    function togglePlayback() {
+      clearMusicError();
+      /* The player has to exist with a size before it is created, so the frame
+         opens first — on the click, never before it. */
+      player.classList.add("is-engaged");
+      if (!ytPlayer || !ready) {
+        playWhenReady = true;
+        loadApi();
+        return;
+      }
+      if (ytPlayer.getPlayerState() === window.YT.PlayerState.PLAYING) ytPlayer.pauseVideo();
+      else ytPlayer.playVideo();
     }
 
     toggle.addEventListener("click", togglePlayback);
 
-    audio.addEventListener("play", function () {
-      setPlaying(true);
-      player.classList.remove("has-error");
-      if (error) error.hidden = true;
-    });
-
-    audio.addEventListener("pause", function () {
-      setPlaying(false);
-    });
-
-    audio.addEventListener("error", showMusicError);
-
     if (volume) {
       volume.addEventListener("input", function () {
-        audio.volume = clampVolume(volume.value);
+        if (ytPlayer && ready) ytPlayer.setVolume(toPlayer(volume.value));
       });
     }
 
     setPlaying(false);
+    if (title && CONFIG.music.title) title.textContent = CONFIG.music.title;
+    loadOfficialTitle();
+    preloadApi();
   }
 
   /* 6) Boot -------------------------------------------------------------- */

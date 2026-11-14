@@ -30,9 +30,11 @@
   <!-- ===== Header ===== -->
   <header class="site-header">
     <a class="brand" href="#top" aria-label="GTA VI Countdown — back to top">
-      <span class="brand__title">Grand Theft Auto</span>
       <span class="brand__mark">VI</span>
-      <span class="brand__sub">Vice City Countdown</span>
+      <span class="brand__text">
+        <span class="brand__title">Grand Theft Auto</span>
+        <span class="brand__sub">Vice City Countdown</span>
+      </span>
     </a>
 
     <div class="today" title="Today's date">
@@ -198,36 +200,57 @@
   </footer>
 
   <!-- ===== Background music player ===== -->
-  <aside class="player" id="musicPlayer" aria-label="Background music">
-    <!-- CC0 instrumental, bundled locally so playback never depends on a CDN. -->
-    <audio id="musicAudio" src="assets/miami-nights.mp3" loop preload="metadata"></audio>
+  <aside class="player" id="musicPlayer" aria-label="Official GTA VI music">
+    <!-- Officially released GTA VI music through YouTube's own embed — nothing is
+         bundled, downloaded or re-uploaded. "Flower In A Hurricane" by Justice
+         feat. Tame Impala, SZA and King Gizzard & the Lizard Wizard is the first
+         single from the game (Ed Banger / Because / Take-Two, released
+         15 October 2026) and this frame is the upload on Justice's own channel.
+         YouTube's rules require the player to stay visible while it plays, so the
+         frame opens inside this card on the first press of Play and stays there.
+         Change music.videoId in script.js to play another track. -->
+    <noscript>
+      <a class="player__external" href="https://www.youtube.com/watch?v=5dPwBWvmcbQ"
+         target="_blank" rel="noopener noreferrer">Official track on YouTube</a>
+    </noscript>
+    <div class="player__stage">
+      <div class="player__frame" id="musicFrame"></div>
+    </div>
 
-    <button class="player__toggle" id="musicToggle" type="button" aria-pressed="false"
-            aria-label="Play background music">
-      <svg class="player__glyph" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-        <polygon class="player__glyph-play" points="8,5 20,12 8,19" />
-        <g class="player__glyph-pause">
-          <rect x="7" y="5" width="3.6" height="14" rx="1.2" />
-          <rect x="13.4" y="5" width="3.6" height="14" rx="1.2" />
-        </g>
-      </svg>
-    </button>
+    <div class="player__row">
+      <button class="player__toggle" id="musicToggle" type="button" aria-pressed="false"
+              aria-label="Play official GTA VI music">
+        <svg class="player__glyph" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+          <polygon class="player__glyph-play" points="8,5 20,12 8,19" />
+          <g class="player__glyph-pause">
+            <rect x="7" y="5" width="3.6" height="14" rx="1.2" />
+            <rect x="13.4" y="5" width="3.6" height="14" rx="1.2" />
+          </g>
+        </svg>
+      </button>
 
-    <div class="player__body">
-      <p class="player__label">Now playing</p>
-      <p class="player__now">
-        <span class="player__eq" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
-        <span class="player__title" id="musicTitle">Miami Nights — cl0udn0te</span>
-      </p>
+      <div class="player__body">
+        <p class="player__label">Now playing <span class="player__badge">Official</span></p>
+        <p class="player__now">
+          <span class="player__eq" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
+          <span class="player__title" id="musicTitle">Flower In A Hurricane — Justice</span>
+        </p>
+      </div>
+    </div>
+
+    <div class="player__row">
       <label class="player__vol">
         <span class="player__vol-label">Volume</span>
         <input class="player__range" id="musicVolume" type="range"
                min="0" max="1" step="0.01" value="0.45" aria-label="Music volume" />
       </label>
-      <p class="player__error" id="musicError" role="alert" hidden>
-        Music unavailable — try reloading the page.
-      </p>
     </div>
+
+    <p class="player__error" id="musicError" role="alert" hidden>
+      Official music can't load right now —
+      <a class="player__external" href="https://www.youtube.com/watch?v=5dPwBWvmcbQ"
+         target="_blank" rel="noopener noreferrer">open the track on YouTube</a>.
+    </p>
   </aside>
 
   <script src="script.js"></script>
