@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="theme-color" content="#050a2b" />
-  <meta name="description" content="Grand Theft Auto VI fan countdown to release — official trailers, a neon Vice City countdown and fresh daily quotes." />
+  <meta name="description" content="Grand Theft Auto VI fan countdown to release — official trailers, a neon Vice City countdown, the official trailers and profiles of Jason and Lucia." />
   <title>GTA VI · Vice City Countdown</title>
 
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23050a2b'/%3E%3Ctext x='32' y='45' font-family='Arial Black,Arial' font-size='30' font-weight='900' text-anchor='middle' fill='%23ff2e9a'%3EVI%3C/text%3E%3C/svg%3E" />
@@ -160,37 +160,61 @@
       </div>
     </section>
 
-    <!-- ===== C & D. Quotes ===== -->
-    <section class="section quotes" id="quotes" aria-labelledby="quotesTitle">
+    <!-- ===== C. Meet the characters ===== -->
+    <section class="section characters" id="characters" aria-labelledby="charactersTitle">
       <div class="section__head">
-        <p class="eyebrow">A thought for the road</p>
-        <h2 class="section__title" id="quotesTitle">Daily <span class="accent">Quote</span></h2>
+        <p class="eyebrow">The two leads</p>
+        <h2 class="section__title" id="charactersTitle">MEET THE <span class="accent">CHARACTERS</span></h2>
+        <p class="section__lead">
+          Jason and Lucia have always known the deck is stacked against them. Meet the two
+          protagonists of Grand Theft Auto VI, in Rockstar Games' own words.
+        </p>
       </div>
 
-      <div class="quote-card">
-        <span class="quote-card__mark" aria-hidden="true">&ldquo;</span>
+      <div class="cast">
+        <article class="cast-card" data-reveal>
+          <figure class="cast-card__figure">
+            <img class="cast-card__image" src="assets/jason-duval.jpg"
+                 width="1536" height="864" loading="lazy" decoding="async"
+                 alt="Official Grand Theft Auto VI artwork of Jason Duval sitting on a motorcycle holding a handgun" />
+            <figcaption class="cast-card__tag">Official GTA VI artwork</figcaption>
+          </figure>
+          <div class="cast-card__body">
+            <h3 class="cast-card__name">JASON <span class="accent">DUVAL</span></h3>
+            <p class="cast-card__line">&ldquo;Jason wants an easy life, but things just keep getting harder.&rdquo;</p>
+            <p class="cast-card__bio">
+              Jason grew up around grifters and crooks. After a stint in the Army trying to shake
+              off his troubled teens, he found himself in the Keys doing what he knows best,
+              working for local drug runners. It might be time to try something new.
+            </p>
+          </div>
+        </article>
 
-        <blockquote class="quote">
-          <p class="quote__text" id="quoteText">Loading today's quote…</p>
-          <footer class="quote__author">
-            <span class="quote__dash">—</span>
-            <span id="quoteAuthor">the Stoics</span>
-          </footer>
-        </blockquote>
-
-        <p class="quote__error" id="quoteError" role="alert" hidden></p>
-
-        <button class="diamond" id="newQuoteBtn" type="button" aria-label="Show a new quote">
-          <span class="diamond__face">
-            <svg class="diamond__icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-              <path d="M20 11a8 8 0 1 0-2.3 6.3M20 5v6h-6"
-                    fill="none" stroke="currentColor" stroke-width="2.1"
-                    stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>
-          </span>
-        </button>
-        <p class="quote__hint">New quote</p>
+        <article class="cast-card" data-reveal>
+          <figure class="cast-card__figure">
+            <img class="cast-card__image" src="assets/lucia-caminos.jpg"
+                 width="1536" height="864" loading="lazy" decoding="async"
+                 alt="Official Grand Theft Auto VI artwork of Lucia Caminos in sunglasses resting her arms on the side of a pool" />
+            <figcaption class="cast-card__tag">Official GTA VI artwork</figcaption>
+          </figure>
+          <div class="cast-card__body">
+            <h3 class="cast-card__name">LUCIA <span class="accent">CAMINOS</span></h3>
+            <p class="cast-card__line">&ldquo;Fresh out of prison and ready to change the odds in her favor, Lucia&rsquo;s committed to her plan — no matter what it takes.&rdquo;</p>
+            <p class="cast-card__bio">
+              Lucia&rsquo;s father taught her to fight as soon as she could walk. Life has been
+              coming at her swinging ever since. Fighting for her family landed her in the Leonida
+              Penitentiary. Sheer luck got her out. Lucia&rsquo;s learned her lesson — only smart
+              moves from here.
+            </p>
+          </div>
+        </article>
       </div>
+
+      <p class="cast__note">
+        Character biographies and artwork from Rockstar Games' official
+        <a href="https://www.rockstargames.com/VI" target="_blank" rel="noopener noreferrer">Grand Theft Auto VI</a>
+        site — confirmed details only, no leaks and no spoilers.
+      </p>
     </section>
 
     <!-- ===== Explore Leonida — the map supplied for this fan site ===== -->
@@ -207,6 +231,7 @@
           <button class="map-btn map-btn--wide" id="mapReset" type="button">Reset view</button>
           <button class="map-btn map-btn--wide" id="mapFull" type="button" aria-pressed="false">Fullscreen</button>
           <span class="map-hint" id="mapHint">Drag to pan · scroll, pinch or double-click to zoom</span>
+          <output class="map-zoom" id="mapZoomLevel" aria-live="off" title="Zoom level, where 100% shows the map at the size it was supplied">100%</output>
         </div>
 
         <div class="map-viewport" id="mapViewport" tabindex="0"
@@ -233,6 +258,14 @@
             fullscreen viewer above is this site's own — it is not an official map tool.
           </p>
           <p class="map-credit__note">
+            <strong>Image quality:</strong> the map image supplied for this page is 473 × 648 pixels,
+            and it is never stretched to hide that. The readout above shows how large it is being
+            drawn, where 100% is its original size: it opens at the largest size that still fits
+            (exactly 100% on a desktop, a little less on a phone) and every zoom step enlarges those
+            same pixels, so past 100% a close-up softens. Only a higher-resolution map image would
+            make a deeper close-up sharp.
+          </p>
+          <p class="map-credit__note">
             Unofficial fan project · not affiliated with Rockstar Games or Take-Two Interactive.
             Community-made interactive maps, if you want street-level detail:
             <a href="https://www.gtabase.com/gta-6/map/" target="_blank" rel="noopener noreferrer">GTABase</a> ·
@@ -250,7 +283,6 @@
       <p class="site-footer__sub">An unofficial Grand Theft Auto VI fan project</p>
     </div>
     <p>Unofficial fan project · Not affiliated with Rockstar Games or Take-Two Interactive.</p>
-    <p>Quotes powered by <a href="https://stoic.tekloon.net/stoic-quote" target="_blank" rel="noopener noreferrer">stoic.tekloon.net</a></p>
   </footer>
 
   <!-- ===== Background music player (audio only) ===== -->

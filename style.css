@@ -2,7 +2,7 @@
    GTA VI · Vice City Countdown — stylesheet
    Sections: 1) tokens 2) base 3) backdrop 4) header 5) shared section chrome
              6) cinematic key-art banner 7) trailers 8) countdown hero
-             9) quotes + diamond button 10) explore Leonida map 11) footer
+             9) meet the characters 10) explore Leonida map 11) footer
              12) animations 13) background music player 14) responsive
    ========================================================================== */
 
@@ -190,6 +190,7 @@ a { color: var(--turquoise); }
 /* 5) Shared section chrome --------------------------------------------- */
 .section {
   width: min(100% - clamp(2rem, 8vw, 5rem), var(--wrap));
+  scroll-margin-top: 5.5rem;
   margin-inline: auto;
   padding-block: clamp(3rem, 7vw, 5.5rem);
 }
@@ -602,128 +603,130 @@ a { color: var(--turquoise); }
   animation: shimmer 3s linear infinite, pop 1s cubic-bezier(0.2, 0.8, 0.2, 1) both;
 }
 
-/* 9) Quotes ------------------------------------------------------------- */
-.quote-card {
-  position: relative;
-  max-width: 900px;
-  margin-inline: auto;
-  padding: clamp(2rem, 6vw, 3.5rem) clamp(1.25rem, 5vw, 3.5rem);
-  text-align: center;
-  border-radius: 24px;
-  background: linear-gradient(165deg, rgba(14, 111, 174, 0.22), rgba(5, 10, 43, 0.9));
-  border: 1px solid rgba(255, 46, 154, 0.3);
-  box-shadow: 0 26px 60px rgba(0, 0, 0, 0.45), inset 0 0 40px rgba(46, 230, 230, 0.1);
+/* 9) Meet the characters ------------------------------------------------ */
+.section__lead {
+  margin: 0.9rem auto 0;
+  max-width: 48ch;
+  font-size: clamp(0.95rem, 2.2vw, 1.08rem);
+  color: var(--muted);
 }
 
-.quote-card__mark {
+.cast {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: clamp(1.25rem, 3.5vw, 2.5rem);
+  align-items: start;
+}
+
+.cast-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border-radius: 24px;
+  background: linear-gradient(170deg, rgba(14, 111, 174, 0.2), rgba(5, 10, 43, 0.92) 55%, rgba(3, 6, 28, 0.96));
+  border: 1px solid rgba(46, 230, 230, 0.3);
+  box-shadow: 0 26px 60px rgba(0, 0, 0, 0.5), inset 0 0 40px rgba(46, 230, 230, 0.08);
+  transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1),
+              border-color 0.5s ease, box-shadow 0.5s ease, opacity 0.8s ease;
+}
+
+/* Each card rises into view the first time it is scrolled to. The hidden start
+   state is scoped to html.js, so the cards are never invisible without JS. */
+html.js .cast-card[data-reveal] { opacity: 0; transform: translateY(30px); }
+
+.cast-card.is-revealed,
+html.js .cast-card[data-reveal].is-revealed {
+  opacity: 1;
+  transform: none;
+  border-color: rgba(255, 46, 154, 0.45);
+  box-shadow:
+    0 26px 60px rgba(0, 0, 0, 0.55),
+    0 0 34px rgba(255, 46, 154, 0.28),
+    inset 0 0 40px rgba(46, 230, 230, 0.1);
+}
+
+.cast-card:hover .cast-card__image,
+.cast-card:focus-within .cast-card__image { transform: scale(1.045); }
+
+.cast-card__figure {
+  position: relative;
+  margin: 0;
+  overflow: hidden;
+  aspect-ratio: 16 / 9;
+  background: rgba(3, 6, 28, 0.9);
+}
+
+/* A cyan-to-pink wash plus a fade into the card body, so the artwork and the
+   text below read as one poster. */
+.cast-card__figure::after {
+  content: "";
   position: absolute;
-  top: -0.15em;
-  left: clamp(0.5rem, 3vw, 1.5rem);
-  font-family: var(--font-display);
-  font-size: 7rem;
-  line-height: 1;
-  color: rgba(255, 46, 154, 0.25);
+  inset: 0;
+  background:
+    linear-gradient(180deg, rgba(3, 6, 28, 0) 42%, rgba(5, 10, 43, 0.94) 100%),
+    linear-gradient(120deg, rgba(46, 230, 230, 0.14), rgba(255, 46, 154, 0.16));
   pointer-events: none;
 }
 
-.quote { margin: 0; }
-
-.quote__text {
-  margin: 0;
-  font-size: clamp(1.15rem, 3.1vw, 1.9rem);
-  font-weight: 300;
-  line-height: 1.5;
-  color: var(--white);
-  transition: opacity 0.4s ease, transform 0.4s ease;
-}
-
-.quote__author {
-  margin-top: 1.1rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.6rem;
-  font-size: clamp(0.85rem, 2.3vw, 1.05rem);
-  font-weight: 600;
-  letter-spacing: 2px;
-  text-transform: uppercase;
-  color: var(--white);
-  transition: opacity 0.4s ease, transform 0.4s ease;
-}
-
-.quote__dash { color: var(--pink); }
-
-/* fade used when swapping content */
-.is-fading .quote__text,
-.is-fading .quote__author { opacity: 0; transform: translateY(8px); }
-
-.quote__error {
-  margin: 1.25rem 0 0;
-  padding: 0.7rem 1rem;
-  border-radius: 12px;
-  font-size: 0.92rem;
-  color: #ffe3f2;
-  background: rgba(194, 0, 111, 0.28);
-  border: 1px solid rgba(255, 46, 154, 0.5);
-}
-
-/* Diamond button */
-.diamond {
-  position: relative;
-  width: 84px; height: 84px;
-  margin: clamp(1.75rem, 5vw, 2.5rem) auto 0;
-  padding: 0;
+.cast-card__image {
   display: block;
-  transform: rotate(45deg);
-  border-radius: 16px;
-  cursor: pointer;
-  background: linear-gradient(135deg, #ff5fbb 0%, var(--pink) 45%, var(--pink-deep) 100%);
-  border: 2px solid rgba(255, 255, 255, 0.85);
-  box-shadow:
-    0 0 16px rgba(255, 46, 154, 0.9),
-    0 0 42px rgba(255, 46, 154, 0.6),
-    inset 0 0 18px rgba(255, 255, 255, 0.35);
-  transition: transform 0.28s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.28s ease, filter 0.28s ease;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.9s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
-.diamond__face {
+.cast-card__tag {
   position: absolute;
-  inset: 0;
-  display: grid;
-  place-items: center;
-  transform: rotate(-45deg);
-  color: var(--white);
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 1;
+  margin: 0;
+  padding: 0 clamp(1rem, 3vw, 1.4rem) 0.65rem;
+  text-align: right;
+  font-family: var(--font-script);
+  font-size: clamp(1rem, 2.6vw, 1.3rem);
+  line-height: 1.1;
+  color: var(--turquoise);
+  text-shadow: var(--glow-cyan);
 }
 
-.diamond__icon { width: 30px; height: 30px; transition: transform 0.6s cubic-bezier(0.2, 0.8, 0.2, 1); }
-
-.diamond:hover,
-.diamond:focus-visible {
-  transform: rotate(45deg) scale(1.09);
-  filter: brightness(1.1);
-  box-shadow:
-    0 0 24px rgba(255, 46, 154, 1),
-    0 0 70px rgba(255, 46, 154, 0.8),
-    inset 0 0 22px rgba(255, 255, 255, 0.5);
+.cast-card__body {
+  padding: clamp(1.1rem, 3vw, 2rem) clamp(1.1rem, 3vw, 2rem) clamp(1.4rem, 3.5vw, 2.2rem);
+  text-align: center;
 }
 
-.diamond:hover .diamond__icon,
-.diamond:focus-visible .diamond__icon { transform: rotate(180deg); }
+.cast-card__name {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: clamp(2.1rem, 5.5vw, 3.2rem);
+  letter-spacing: 3px;
+  line-height: 1;
+  text-shadow: 0 0 20px rgba(46, 230, 230, 0.35);
+}
 
-.diamond:active { transform: rotate(45deg) scale(0.94); }
+.cast-card__line {
+  margin: 0.9rem 0 0;
+  font-size: clamp(0.95rem, 2.4vw, 1.12rem);
+  font-weight: 300;
+  font-style: italic;
+  color: var(--pink-soft);
+}
 
-.diamond:focus-visible { outline: 2px solid var(--white); outline-offset: 6px; }
-
-.diamond[disabled] { cursor: progress; filter: saturate(0.7) brightness(0.9); }
-
-.diamond.is-spinning .diamond__icon { animation: spin 0.9s linear infinite; }
-
-.quote__hint {
-  margin: 1.1rem 0 0;
-  font-size: 0.68rem;
-  letter-spacing: 4px;
-  text-transform: uppercase;
+.cast-card__bio {
+  margin: 0.9rem 0 0;
+  font-size: clamp(0.92rem, 2.2vw, 1.02rem);
   color: var(--muted);
+}
+
+.cast__note {
+  margin: clamp(1.5rem, 4vw, 2.25rem) 0 0;
+  text-align: center;
+  font-size: 0.78rem;
+  letter-spacing: 1px;
+  color: rgba(255, 255, 255, 0.55);
 }
 
 /* 10) Explore Leonida — map viewer --------------------------------------- */
@@ -764,6 +767,9 @@ html.js .map-shell[data-reveal].is-revealed {
 
 /* Toolbar --------------------------------------------------------------- */
 .map-toolbar {
+  position: sticky;
+  top: 4.6rem;                 /* clears the sticky site header */
+  z-index: 6;
   display: flex;
   flex-wrap: wrap;
   align-items: center;
@@ -803,8 +809,25 @@ html.js .map-shell[data-reveal].is-revealed {
 .map-btn:active { transform: scale(0.96); }
 .map-btn:focus-visible { outline: 2px solid var(--turquoise); outline-offset: 2px; }
 
-.map-hint {
+.map-zoom {
   margin-left: auto;
+  font-family: var(--font-display);
+  font-size: 1.05rem;
+  letter-spacing: 1.5px;
+  color: var(--turquoise);
+  text-shadow: 0 0 10px rgba(46, 230, 230, 0.5);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+/* Enlarged past the artwork's own pixels, so the readout warns in pink. */
+.map-zoom.is-enlarged {
+  color: var(--pink-soft);
+  text-shadow: 0 0 10px rgba(255, 46, 154, 0.6);
+}
+
+.map-hint {
+  margin-left: 0.9rem;
   font-size: 0.66rem;
   letter-spacing: 2px;
   text-transform: uppercase;
@@ -814,9 +837,10 @@ html.js .map-shell[data-reveal].is-revealed {
 /* Map surface ------------------------------------------------------------ */
 .map-viewport {
   position: relative;
-  /* The map artwork is portrait (473 × 648), so the frame keeps that ratio and
-     is capped by the window height: the whole map stays visible, never cropped. */
-  width: min(100%, 60vh, 540px);
+  /* The map artwork is portrait (473 × 648). The frame keeps that ratio, is
+     never wider than the artwork itself — so the map always shows at its own
+     pixels, never stretched or upscaled — and is capped by the window height. */
+  width: min(100%, 58vh, 473px);
   margin-inline: auto;
   aspect-ratio: 473 / 648;
   overflow: hidden;
@@ -919,6 +943,11 @@ html.js .map-shell[data-reveal].is-revealed {
   margin: 0;
 }
 
+.map-shell:fullscreen .map-toolbar,
+.map-shell:-webkit-full-screen .map-toolbar {
+  position: static;
+}
+
 .map-shell:fullscreen .map-credit,
 .map-shell:-webkit-full-screen .map-credit {
   margin-top: 0.75rem;
@@ -997,10 +1026,6 @@ html.js .map-shell[data-reveal].is-revealed {
   0%   { transform: scale(0.6) rotate(-3deg); opacity: 0; }
   60%  { transform: scale(1.08) rotate(1deg); opacity: 1; }
   100% { transform: scale(1) rotate(0); opacity: 1; }
-}
-
-@keyframes spin {
-  to { transform: rotate(360deg); }
 }
 
 @keyframes riseIn {
@@ -1229,6 +1254,7 @@ html.js .map-shell[data-reveal].is-revealed {
 
 /* 14) Responsive --------------------------------------------------------- */
 @media (max-width: 900px) {
+  .cast { grid-template-columns: minmax(0, 1fr); }
   .trailer-grid { grid-template-columns: minmax(0, 1fr); }
   .hero { min-height: auto; }
   .cinematic { min-height: clamp(460px, 78vh, 720px); }
@@ -1245,9 +1271,7 @@ html.js .map-shell[data-reveal].is-revealed {
   .cinematic__cue { display: none; }
   .today time { font-size: 1.05rem; }
   .countdown { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.7rem; }
-  .quote-card__mark { font-size: 5rem; }
-  .diamond { width: 72px; height: 72px; }
-  .diamond__icon { width: 26px; height: 26px; }
+  .cast-card__name { font-size: 2.3rem; }
   .map-hint { display: none; }
   .map-credit { font-size: 0.8rem; }
 }

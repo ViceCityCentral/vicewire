@@ -1,7 +1,7 @@
 /* ==========================================================================
    GTA VI · Vice City Countdown — behaviour
-   1) Config  2) Date  3) Countdown  4) Quotes  5) Music player  6) Map viewer
-   7) Scroll reveal  8) Boot
+   1) Config  2) Date  3) Countdown  4) Music player  5) Map viewer
+   6) Scroll reveal  7) Boot
    ========================================================================== */
 (function () {
   "use strict";
@@ -14,29 +14,6 @@
   const CONFIG = {
     // Official GTA VI release date (interpreted in the visitor's local time).
     releaseDate: new Date("2026-11-19T00:00:00"),
-
-    // Random famous-person (stoic) quote endpoint requested for this site.
-    quoteApi: "https://stoic.tekloon.net/stoic-quote",
-
-    /* That API sends no `Access-Control-Allow-Origin` header, so a browser
-       cannot call it directly from another origin — the request is blocked by
-       CORS before the response can be read. To keep the site working as a
-       plain static page the call is retried through read-only CORS proxies.
-       The direct call is always tried first, so no third party is used if the
-       API ever enables CORS or if you put your own proxy in front of it.
-       Set this array to [] to disable the fallbacks. */
-    corsProxies: [
-      (url) => "https://r.jina.ai/" + url,
-      (url) => "https://api.allorigins.win/raw?url=" + encodeURIComponent(url),
-      (url) => "https://api.codetabs.com/v1/proxy?quest=" + encodeURIComponent(url)
-    ],
-
-    // Per-request timeouts (ms).
-    directTimeout: 6000,
-    proxyTimeout: 12000,
-
-    // Fade duration between two quotes (must match the CSS 0.4s).
-    fadeMs: 400,
 
     /* Officially released GTA VI music, streamed by the rights holders' own
        official player. No audio file is bundled, downloaded, extracted or
@@ -145,150 +122,7 @@
     if (heroDate) heroDate.textContent = formatted;
   }
 
-  /* 4) Quotes ------------------------------------------------------------ */
-  // Small offline set, used only if every network source fails.
-  const FALLBACK_QUOTES = [
-    { quote: "You have power over your mind — not outside events. Realize this, and you will find strength.", author: "Marcus Aurelius" },
-    { quote: "We suffer more often in imagination than in reality.", author: "Seneca" },
-    { quote: "It is not what happens to you, but how you react to it that matters.", author: "Epictetus" },
-    { quote: "Waste no more time arguing what a good man should be. Be one.", author: "Marcus Aurelius" },
-    { quote: "Luck is what happens when preparation meets opportunity.", author: "Seneca" }
-  ];
-
-  const errorBox = () => $("quoteError");
-  const quoteCard = () => document.querySelector(".quote-card");
-  const newQuoteBtn = () => $("newQuoteBtn");
-
-  let isLoadingQuote = false;
-
-  function showError(message) {
-    const box = errorBox();
-    if (!box) return;
-    box.textContent = message;
-    box.hidden = false;
-  }
-
-  function clearError() {
-    const box = errorBox();
-    if (box) box.hidden = true;
-  }
-
-  /** Fade the card out, swap the text, fade back in. */
-  function applyQuote(text, author) {
-    const card = quoteCard();
-    const textEl = $("quoteText");
-    const authorEl = $("quoteAuthor");
-    if (!textEl || !authorEl) return;
-
-    const swap = () => {
-      textEl.textContent = text;
-      authorEl.textContent = author;
-      if (card) card.classList.remove("is-fading");
-    };
-
-    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    if (card && !reduced) {
-      card.classList.add("is-fading");
-      window.setTimeout(swap, CONFIG.fadeMs);
-    } else {
-      swap();
-    }
-  }
-
-  /** Pull { quote, author } out of either raw JSON or a proxy's wrapped text. */
-  function parseQuotePayload(raw) {
-    if (!raw) return null;
-
-    const text = String(raw).trim();
-    const candidates = [text];
-    const braces = text.match(/\{[\s\S]*\}/);   // covers proxies that wrap the JSON
-    if (braces) candidates.push(braces[0]);
-
-    for (const candidate of candidates) {
-      try {
-        const parsed = JSON.parse(candidate);
-        const data = parsed && parsed.data ? parsed.data : parsed;
-        if (data && typeof data.quote === "string" && data.quote.trim()) {
-          const author =
-            typeof data.author === "string" && data.author.trim()
-              ? data.author.trim()
-              : "Unknown";
-          return { quote: data.quote.trim(), author };
-        }
-      } catch (_) {
-        /* not this one — try the next candidate */
-      }
-    }
-    return null;
-  }
-
-  function fetchWithTimeout(url, timeout) {
-    const controller = new AbortController();
-    const timer = window.setTimeout(() => controller.abort(), timeout);
-
-    return fetch(url, { signal: controller.signal })
-      .then((response) => {
-        if (!response.ok) throw new Error("HTTP " + response.status);
-        return response.text();
-      })
-      .then((body) => {
-        const result = parseQuotePayload(body);
-        if (!result) throw new Error("Unusable response");
-        return result;
-      })
-      .finally(() => window.clearTimeout(timer));
-  }
-
-  async function getQuote() {
-    // 1. Direct call — no third party involved.
-    try {
-      return await fetchWithTimeout(CONFIG.quoteApi, CONFIG.directTimeout);
-    } catch (err) {
-      console.warn("[GTA VI countdown] direct quote request failed, trying proxies:", err.message);
-    }
-
-    // 2. Race the CORS proxies and take whichever answers first.
-    if (!CONFIG.corsProxies.length) throw new Error("No fallback sources configured");
-
-    const attempts = CONFIG.corsProxies.map((build) =>
-      fetchWithTimeout(build(CONFIG.quoteApi), CONFIG.proxyTimeout)
-    );
-
-    return await Promise.any(attempts);   // rejects with AggregateError if all fail
-  }
-
-  async function fetchQuote() {
-    if (isLoadingQuote) return;
-    isLoadingQuote = true;
-
-    const btn = newQuoteBtn();
-    if (btn) {
-      btn.disabled = true;
-      btn.classList.add("is-spinning");
-    }
-    clearError();
-
-    try {
-      const { quote, author } = await getQuote();
-      applyQuote(quote, author);
-    } catch (err) {
-      console.error("[GTA VI countdown] every quote source failed:", err);
-      const fallback = FALLBACK_QUOTES[Math.floor(Math.random() * FALLBACK_QUOTES.length)];
-      applyQuote(fallback.quote, fallback.author);
-      showError(
-        "Couldn't reach the live quote service, so here's one from our shelf. " +
-        "Check your connection and tap the diamond to try again."
-      );
-    } finally {
-      isLoadingQuote = false;
-      if (btn) {
-        btn.disabled = false;
-        btn.classList.remove("is-spinning");
-      }
-    }
-  }
-
-  /* 5) Official music player (audio only) --------------------------------
+  /* 4) Official music player (audio only) --------------------------------
      The track is streamed by the rights holders' own official player and this
      card only drives it: the visitor's play/pause button and volume slider
      mirror the real playback state, and the card stays audio only — no video
@@ -634,7 +468,7 @@
     if (document.readyState === "complete") setTimeout(loadYouTubeApi, 800);
   }
 
-  /* 6) Explore Leonida — map viewer ---------------------------------------
+  /* 5) Explore Leonida — map viewer ---------------------------------------
      Zoom, pan and fullscreen for this site's own static Leonida map. The
      picture is a local image, so no map service is contacted and nothing about
      the geography is invented here. */
@@ -646,8 +480,9 @@
     const fullBtn = $("mapFull");
     if (!shell || !viewport || !image) return;
 
-    const MIN = 1;      // "fit the frame"
-    const MAX = 5;
+    const MIN = 1;      // "fit the frame" — here the map is shown at its own size
+    const MAX = 4;      // 4x the artwork's own pixels is as far as it stays usable
+    const zoomLabel = $("mapZoomLevel");
     const BUTTON_STEP = 0.6;
     const WHEEL_STEP = 1.12;
     const TAP_SLOP = 6; // px of movement still counted as a tap
@@ -669,6 +504,7 @@
       const nh = image.naturalHeight || 1;
       const fit = Math.min(cw / nw, ch / nh);   // object-fit: contain
       return {
+        fit: fit,
         maxX: Math.max(0, (nw * fit * scale - cw) / 2),
         maxY: Math.max(0, (nh * fit * scale - ch) / 2)
       };
@@ -679,6 +515,16 @@
       x = clamp(x, -l.maxX, l.maxX);
       y = clamp(y, -l.maxY, l.maxY);
       image.style.transform = "translate3d(" + x.toFixed(1) + "px," + y.toFixed(1) + "px,0) scale(" + scale.toFixed(3) + ")";
+
+      /* The readout is the map's real size on screen as a share of the
+         artwork's own pixels: 100% is the map at its original size, anything
+         above it is an enlargement of those same pixels. */
+      if (zoomLabel && (image.naturalWidth || 0) > 1) {
+        const percent = Math.round(l.fit * scale * 100);
+        const text = percent + "%";
+        if (zoomLabel.textContent !== text) zoomLabel.textContent = text;
+        zoomLabel.classList.toggle("is-enlarged", percent > 100);
+      }
     }
 
     function activate() { active = true; }
@@ -933,7 +779,7 @@
     render();
   }
 
-  /* 7) Scroll reveal ------------------------------------------------------ */
+  /* 6) Scroll reveal ------------------------------------------------------ */
   // Adds .is-revealed to [data-reveal] elements the first time they come into
   // view. Without IntersectionObserver (or with no JS at all) the CSS keeps
   // them visible, so nothing is ever hidden forever.
@@ -957,7 +803,7 @@
     targets.forEach(function (el) { observer.observe(el); });
   }
 
-  /* 8) Boot -------------------------------------------------------------- */
+  /* 7) Boot -------------------------------------------------------------- */
   function init() {
     renderToday();
     describeRelease();
@@ -966,13 +812,9 @@
     // Keep the header date fresh (a minute is plenty).
     window.setInterval(renderToday, 60000);
 
-    const btn = newQuoteBtn();
-    if (btn) btn.addEventListener("click", fetchQuote);
-
     initMusicPlayer();
     initMapViewer();
     initReveal();
-    fetchQuote();
   }
 
   document.addEventListener("DOMContentLoaded", function () {
