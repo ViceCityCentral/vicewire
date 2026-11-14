@@ -1,6 +1,6 @@
 /* ==========================================================================
    GTA VI · Vice City Countdown — behaviour
-   1) Config   2) Current date   3) Countdown   4) Quotes   5) Boot
+   1) Config  2) Current date  3) Countdown  4) Quotes  5) Music player  6) Boot
    ========================================================================== */
 (function () {
   "use strict";
@@ -250,7 +250,68 @@
     }
   }
 
-  /* 5) Boot -------------------------------------------------------------- */
+  /* 5) Background music player ------------------------------------------- */
+  function initMusicPlayer() {
+    const player = $("musicPlayer");
+    const audio = $("musicAudio");
+    const toggle = $("musicToggle");
+    const volume = $("musicVolume");
+    const error = $("musicError");
+    if (!player || !audio || !toggle) return;
+
+    function clampVolume(value) {
+      const v = Number(value);
+      return Number.isFinite(v) ? Math.min(1, Math.max(0, v)) : 1;
+    }
+
+    audio.loop = true;
+    if (volume) audio.volume = clampVolume(volume.value);
+
+    function setPlaying(isPlaying) {
+      player.classList.toggle("is-playing", isPlaying);
+      toggle.setAttribute("aria-pressed", String(isPlaying));
+      toggle.setAttribute("aria-label", (isPlaying ? "Pause" : "Play") + " background music");
+    }
+
+    function showMusicError() {
+      player.classList.add("has-error");
+      if (error) error.hidden = false;
+    }
+
+    // Browsers block autoplay, so the track only ever starts from this click.
+    function togglePlayback() {
+      if (audio.paused) {
+        const started = audio.play();
+        if (started && typeof started.catch === "function") started.catch(showMusicError);
+      } else {
+        audio.pause();
+      }
+    }
+
+    toggle.addEventListener("click", togglePlayback);
+
+    audio.addEventListener("play", function () {
+      setPlaying(true);
+      player.classList.remove("has-error");
+      if (error) error.hidden = true;
+    });
+
+    audio.addEventListener("pause", function () {
+      setPlaying(false);
+    });
+
+    audio.addEventListener("error", showMusicError);
+
+    if (volume) {
+      volume.addEventListener("input", function () {
+        audio.volume = clampVolume(volume.value);
+      });
+    }
+
+    setPlaying(false);
+  }
+
+  /* 6) Boot -------------------------------------------------------------- */
   function init() {
     renderToday();
     describeRelease();
@@ -262,6 +323,7 @@
     const btn = newQuoteBtn();
     if (btn) btn.addEventListener("click", fetchQuote);
 
+    initMusicPlayer();
     fetchQuote();
   }
 

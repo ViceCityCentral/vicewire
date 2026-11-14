@@ -2,7 +2,8 @@
    GTA VI · Vice City Countdown — stylesheet
    Sections: 1) tokens 2) base 3) backdrop 4) header 5) shared section chrome
              6) cinematic key-art banner 7) trailers 8) countdown hero
-             9) quotes + diamond button 10) footer 11) animations 12) responsive
+             9) quotes + diamond button 10) footer 11) animations
+             12) background music player 13) responsive
    ========================================================================== */
 
 /* 1) Design tokens ------------------------------------------------------- */
@@ -123,10 +124,14 @@ a { color: var(--turquoise); }
   -webkit-backdrop-filter: blur(10px);
 }
 
+/* Stacked lockup: wordmark on top, the "VI" badge beneath it, both centred. */
 .brand {
   display: flex;
+  flex-direction: column;
   align-items: center;
-  gap: 0.75rem;
+  gap: 0.4rem;
+  line-height: 1.1;
+  text-align: center;
   text-decoration: none;
   color: var(--white);
 }
@@ -144,8 +149,6 @@ a { color: var(--turquoise); }
   border-radius: 12px;
   box-shadow: 0 0 12px rgba(255, 46, 154, 0.7), inset 0 0 14px rgba(255, 46, 154, 0.35);
 }
-
-.brand__text { display: flex; flex-direction: column; line-height: 1.1; }
 
 .brand__title {
   font-family: var(--font-display);
@@ -772,7 +775,173 @@ a { color: var(--turquoise); }
   html { scroll-behavior: auto; }
 }
 
-/* 12) Responsive --------------------------------------------------------- */
+/* 12) Background music player ------------------------------------------- */
+.player {
+  position: fixed;
+  right: clamp(0.75rem, 2.2vw, 1.5rem);
+  bottom: clamp(0.75rem, 2.2vh, 1.5rem);
+  z-index: 15;
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  width: min(330px, calc(100vw - 1.5rem));
+  padding: 0.65rem 0.85rem;
+  border-radius: 16px;
+  background: linear-gradient(155deg, rgba(11, 27, 77, 0.94), rgba(5, 10, 43, 0.96));
+  border: 1px solid rgba(46, 230, 230, 0.38);
+  box-shadow:
+    0 12px 32px rgba(3, 6, 28, 0.6),
+    inset 0 0 18px rgba(46, 230, 230, 0.12),
+    0 0 20px rgba(255, 46, 154, 0.22);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  transition: border-color 0.35s ease, box-shadow 0.35s ease;
+}
+
+.player.is-playing {
+  border-color: rgba(255, 46, 154, 0.6);
+  box-shadow:
+    0 12px 32px rgba(3, 6, 28, 0.6),
+    inset 0 0 20px rgba(255, 46, 154, 0.16),
+    0 0 26px rgba(255, 46, 154, 0.4);
+}
+
+/* Play / pause button --------------------------------------------------- */
+.player__toggle {
+  flex: 0 0 auto;
+  display: grid;
+  place-items: center;
+  width: 46px;
+  height: 46px;
+  padding: 0;
+  border: 1px solid rgba(255, 124, 199, 0.75);
+  border-radius: 50%;
+  background: radial-gradient(circle at 32% 28%, rgba(255, 46, 154, 0.95), rgba(194, 0, 111, 0.95));
+  color: var(--white);
+  cursor: pointer;
+  box-shadow: 0 0 14px rgba(255, 46, 154, 0.65), inset 0 0 12px rgba(255, 255, 255, 0.22);
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.player__toggle:hover {
+  transform: scale(1.07);
+  box-shadow: 0 0 22px rgba(255, 46, 154, 0.9), inset 0 0 14px rgba(255, 255, 255, 0.3);
+}
+
+.player__toggle:active { transform: scale(0.94); }
+.player__toggle:focus-visible { outline: 2px solid var(--turquoise); outline-offset: 3px; }
+
+.player__glyph { width: 22px; height: 22px; fill: currentColor; }
+.player__glyph-pause { display: none; }
+.player.is-playing .player__glyph-play { display: none; }
+.player.is-playing .player__glyph-pause { display: block; }
+
+/* Track info ------------------------------------------------------------ */
+.player__body {
+  flex: 1 1 auto;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.32rem;
+}
+
+.player__label {
+  margin: 0;
+  font-size: 0.6rem;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--turquoise);
+}
+
+.player__now { margin: 0; display: flex; align-items: center; gap: 0.5rem; }
+
+.player__title {
+  min-width: 0;
+  font-size: 0.82rem;
+  font-weight: 500;
+  color: var(--white);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Animated equaliser — the "music is playing" indicator. */
+.player__eq { display: flex; align-items: flex-end; gap: 2px; height: 14px; flex: 0 0 auto; }
+
+.player__eq i {
+  display: block;
+  width: 3px;
+  height: 4px;
+  border-radius: 2px;
+  background: linear-gradient(180deg, var(--turquoise), var(--pink));
+  opacity: 0.5;
+  transition: opacity 0.3s ease;
+}
+
+.player.is-playing .player__eq i {
+  opacity: 1;
+  animation: eqBounce 0.9s ease-in-out infinite;
+}
+
+.player.is-playing .player__eq i:nth-child(2) { animation-delay: 0.15s; }
+.player.is-playing .player__eq i:nth-child(3) { animation-delay: 0.3s; }
+.player.is-playing .player__eq i:nth-child(4) { animation-delay: 0.45s; }
+
+@keyframes eqBounce {
+  0%, 100% { height: 4px; }
+  50%      { height: 14px; }
+}
+
+/* Volume ---------------------------------------------------------------- */
+.player__vol { display: flex; align-items: center; gap: 0.5rem; }
+
+.player__vol-label {
+  font-size: 0.58rem;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.player__range {
+  -webkit-appearance: none;
+  appearance: none;
+  flex: 1 1 auto;
+  min-width: 0;
+  height: 4px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, var(--turquoise), var(--pink));
+  cursor: pointer;
+}
+
+.player__range::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 14px;
+  height: 14px;
+  border: 2px solid var(--white);
+  border-radius: 50%;
+  background: var(--pink);
+  box-shadow: 0 0 10px rgba(255, 46, 154, 0.9);
+}
+
+.player__range::-moz-range-thumb {
+  width: 12px;
+  height: 12px;
+  border: 2px solid var(--white);
+  border-radius: 50%;
+  background: var(--pink);
+  box-shadow: 0 0 10px rgba(255, 46, 154, 0.9);
+}
+
+.player__range:focus-visible { outline: 2px solid var(--turquoise); outline-offset: 4px; }
+
+.player__error { margin: 0; font-size: 0.72rem; color: var(--pink-soft); }
+.player.has-error .player__eq { display: none; }
+
+/* The player is fixed, so the footer needs room to clear it. */
+.site-footer { padding-bottom: 7rem; }
+
+/* 13) Responsive --------------------------------------------------------- */
 @media (max-width: 900px) {
   .trailer-grid { grid-template-columns: minmax(0, 1fr); }
   .hero { min-height: auto; }
@@ -795,7 +964,15 @@ a { color: var(--turquoise); }
   .diamond__icon { width: 26px; height: 26px; }
 }
 
+@media (max-width: 430px) {
+  .player { width: min(296px, calc(100vw - 1.25rem)); gap: 0.6rem; padding: 0.55rem 0.7rem; }
+  .player__toggle { width: 42px; height: 42px; }
+  .player__glyph { width: 20px; height: 20px; }
+  .player__label { letter-spacing: 2px; }
+}
+
 @media (max-width: 380px) {
   .today { padding: 0.3rem 0.6rem; }
   .today__label { display: none; }
+  .player__vol-label { display: none; }
 }

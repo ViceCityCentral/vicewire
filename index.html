@@ -30,11 +30,9 @@
   <!-- ===== Header ===== -->
   <header class="site-header">
     <a class="brand" href="#top" aria-label="GTA VI Countdown — back to top">
+      <span class="brand__title">Grand Theft Auto</span>
       <span class="brand__mark">VI</span>
-      <span class="brand__text">
-        <span class="brand__title">Grand Theft Auto</span>
-        <span class="brand__sub">Vice City Countdown</span>
-      </span>
+      <span class="brand__sub">Vice City Countdown</span>
     </a>
 
     <div class="today" title="Today's date">
@@ -198,6 +196,39 @@
     <p>Unofficial fan project · Not affiliated with Rockstar Games or Take-Two Interactive.</p>
     <p>Quotes powered by <a href="https://stoic.tekloon.net/stoic-quote" target="_blank" rel="noopener noreferrer">stoic.tekloon.net</a></p>
   </footer>
+
+  <!-- ===== Background music player ===== -->
+  <aside class="player" id="musicPlayer" aria-label="Background music">
+    <!-- CC0 instrumental, bundled locally so playback never depends on a CDN. -->
+    <audio id="musicAudio" src="assets/miami-nights.mp3" loop preload="metadata"></audio>
+
+    <button class="player__toggle" id="musicToggle" type="button" aria-pressed="false"
+            aria-label="Play background music">
+      <svg class="player__glyph" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+        <polygon class="player__glyph-play" points="8,5 20,12 8,19" />
+        <g class="player__glyph-pause">
+          <rect x="7" y="5" width="3.6" height="14" rx="1.2" />
+          <rect x="13.4" y="5" width="3.6" height="14" rx="1.2" />
+        </g>
+      </svg>
+    </button>
+
+    <div class="player__body">
+      <p class="player__label">Now playing</p>
+      <p class="player__now">
+        <span class="player__eq" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
+        <span class="player__title" id="musicTitle">Miami Nights — cl0udn0te</span>
+      </p>
+      <label class="player__vol">
+        <span class="player__vol-label">Volume</span>
+        <input class="player__range" id="musicVolume" type="range"
+               min="0" max="1" step="0.01" value="0.45" aria-label="Music volume" />
+      </label>
+      <p class="player__error" id="musicError" role="alert" hidden>
+        Music unavailable — try reloading the page.
+      </p>
+    </div>
+  </aside>
 
   <script src="script.js"></script>
 </body>
