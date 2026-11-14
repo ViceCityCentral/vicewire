@@ -994,73 +994,6 @@ html.js .cast-card[data-reveal].is-revealed {
 .guide__source a:hover,
 .guide__source a:focus-visible { color: var(--pink-soft); border-color: var(--pink); }
 
-.guide-faq { margin-top: clamp(1.5rem, 3.4vw, 2.5rem); }
-
-.guide-faq__title {
-  margin: 0 0 1rem;
-  font-family: var(--font-display);
-  font-size: clamp(1.5rem, 3vw, 2rem);
-  line-height: 1;
-  letter-spacing: 1.4px;
-  color: var(--white);
-}
-
-.faq {
-  margin-bottom: 0.6rem;
-  border-radius: 14px;
-  background: rgba(5, 10, 43, 0.72);
-  border: 1px solid rgba(46, 230, 230, 0.22);
-  transition: border-color 0.3s ease, box-shadow 0.3s ease,
-              opacity 0.8s ease, transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
-}
-
-.faq[open] { border-color: rgba(255, 46, 154, 0.42); box-shadow: 0 0 24px rgba(255, 46, 154, 0.16); }
-
-.faq__q {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 1rem;
-  padding: 0.95rem 1.15rem;
-  cursor: pointer;
-  list-style: none;
-  font-size: 0.95rem;
-  font-weight: 600;
-  color: var(--white);
-  transition: color 0.25s ease;
-}
-
-.faq__q::-webkit-details-marker { display: none; }
-.faq__q:hover { color: var(--pink-soft); }
-.faq__q:focus-visible { outline: 2px solid var(--turquoise); outline-offset: -2px; }
-
-.faq__icon { position: relative; flex: 0 0 auto; width: 14px; height: 14px; }
-
-.faq__icon::before,
-.faq__icon::after {
-  content: "";
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  width: 12px;
-  height: 2px;
-  background: var(--turquoise);
-  box-shadow: 0 0 8px rgba(46, 230, 230, 0.8);
-  transform: translate(-50%, -50%);
-  transition: transform 0.25s ease;
-}
-
-.faq__icon::after { transform: translate(-50%, -50%) rotate(90deg); }
-.faq[open] .faq__icon::after { transform: translate(-50%, -50%) rotate(0deg); }
-
-.faq__a {
-  margin: 0;
-  padding: 0 1.15rem 1.1rem;
-  font-size: 0.88rem;
-  line-height: 1.75;
-  color: var(--muted);
-}
-
 .guide__note {
   margin: 0;
   font-size: 0.76rem;
@@ -1080,13 +1013,11 @@ html.js .cast-card[data-reveal].is-revealed {
 /* Reveal animation — same behaviour as the rest of the page. */
 html.js .fact[data-reveal],
 html.js .ed-card[data-reveal],
-html.js .g-panel[data-reveal],
-html.js .faq[data-reveal] { opacity: 0; transform: translateY(34px); }
+html.js .g-panel[data-reveal] { opacity: 0; transform: translateY(34px); }
 
 html.js .fact[data-reveal].is-revealed,
 html.js .ed-card[data-reveal].is-revealed,
-html.js .g-panel[data-reveal].is-revealed,
-html.js .faq[data-reveal].is-revealed { opacity: 1; transform: none; }
+html.js .g-panel[data-reveal].is-revealed { opacity: 1; transform: none; }
 
 /* 11) Footer ------------------------------------------------------------- */
 .site-footer {
