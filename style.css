@@ -2,7 +2,7 @@
    GTA VI · Vice City Countdown — stylesheet
    Sections: 1) tokens 2) base 3) backdrop 4) header 5) shared section chrome
              6) cinematic key-art banner 7) trailers 8) countdown hero
-             9) meet the characters 10) explore Leonida map 11) footer
+             9) meet the characters 10) trailer breakdown 11) footer
              12) animations 13) official music player 14) responsive
              15) copyright & credits
    ========================================================================== */
@@ -730,231 +730,259 @@ html.js .cast-card[data-reveal].is-revealed {
   color: rgba(255, 255, 255, 0.55);
 }
 
-/* 10) Explore Leonida — map viewer --------------------------------------- */
-/* The map card fades and rises into view the first time it is scrolled to.
-   The hidden start state is scoped to html.js so the map is never invisible
-   when scripting is unavailable. */
-.map-shell {
-  position: relative;
-  padding: clamp(0.85rem, 2vw, 1.35rem);
-  border-radius: calc(var(--radius) + 6px);
-  background:
-    radial-gradient(120% 120% at 12% 0%, rgba(255, 46, 154, 0.16), transparent 58%),
-    radial-gradient(120% 120% at 88% 100%, rgba(46, 230, 230, 0.16), transparent 58%),
-    linear-gradient(160deg, rgba(8, 19, 56, 0.94), rgba(3, 6, 28, 0.97));
-  border: 1px solid rgba(46, 230, 230, 0.32);
-  box-shadow:
-    0 24px 60px rgba(3, 6, 28, 0.65),
-    inset 0 0 32px rgba(46, 230, 230, 0.1);
-  transition: opacity 0.8s ease, transform 0.8s cubic-bezier(0.22, 1, 0.36, 1),
-              border-color 0.6s ease, box-shadow 0.6s ease;
+/* 10) Trailer breakdown --------------------------------------------------- */
+/* One card per official Rockstar Games video: the official embed, a short
+   factual description, "What We Know" and "Details to Notice". Reuses the
+   page's existing tokens, frame, reveal animation and neon language. */
+.breakdown-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: clamp(1.25rem, 3vw, 2.25rem);
+  align-items: start;
 }
 
-html.js .map-shell[data-reveal] {
-  opacity: 0;
-  transform: translateY(34px) scale(0.985);
+.bd-card {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border: 1px solid rgba(46, 230, 230, 0.28);
+  border-radius: var(--radius);
+  background: linear-gradient(160deg, rgba(14, 111, 174, 0.26), rgba(8, 19, 56, 0.86));
+  box-shadow: 0 22px 50px rgba(0, 0, 0, 0.45);
+  transition: transform 0.35s ease, box-shadow 0.35s ease, border-color 0.35s ease,
+              opacity 0.8s ease;
 }
 
-.map-shell.is-revealed,
-html.js .map-shell[data-reveal].is-revealed {
-  opacity: 1;
-  transform: none;
-  border-color: rgba(255, 46, 154, 0.45);
-  box-shadow:
-    0 24px 60px rgba(3, 6, 28, 0.7),
-    0 0 34px rgba(255, 46, 154, 0.32),
-    inset 0 0 32px rgba(46, 230, 230, 0.12);
+.bd-card:hover {
+  transform: translateY(-6px);
+  border-color: rgba(255, 46, 154, 0.6);
+  box-shadow: 0 26px 60px rgba(0, 0, 0, 0.5), 0 0 28px rgba(255, 46, 154, 0.35);
 }
 
-/* Toolbar --------------------------------------------------------------- */
-.map-toolbar {
-  position: sticky;
-  top: 4.6rem;                 /* clears the sticky site header */
-  z-index: 6;
+/* The reveal's hidden start state is scoped to html.js, so a card can never
+   stay invisible when scripting is unavailable. */
+html.js .bd-card[data-reveal] { opacity: 0; transform: translateY(34px); }
+
+.bd-card.is-revealed,
+html.js .bd-card[data-reveal].is-revealed { opacity: 1; transform: none; }
+
+.bd-card__body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+  padding: clamp(1rem, 2.4vw, 1.5rem);
+}
+
+.bd-card__meta {
   display: flex;
   flex-wrap: wrap;
-  align-items: center;
-  gap: 0.5rem;
-  margin-bottom: clamp(0.6rem, 1.6vw, 0.9rem);
+  align-items: baseline;
+  gap: 0.3rem 0.75rem;
+  margin: 0;
 }
 
-.map-btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-width: 42px;
-  height: 42px;
-  padding: 0 0.7rem;
+.bd-card__no {
   font-family: var(--font-display);
-  font-size: 1.4rem;
-  letter-spacing: 1.5px;
-  line-height: 1;
-  color: var(--white);
-  cursor: pointer;
-  border: 1px solid rgba(46, 230, 230, 0.45);
-  border-radius: 12px;
-  background: linear-gradient(160deg, rgba(11, 27, 77, 0.95), rgba(5, 10, 43, 0.95));
-  box-shadow: inset 0 0 12px rgba(46, 230, 230, 0.14);
-  transition: transform 0.2s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+  font-size: 1.5rem;
+  letter-spacing: 2px;
+  color: var(--pink);
+  text-shadow: var(--glow-pink);
 }
 
-.map-btn--wide { font-size: 1.05rem; letter-spacing: 1px; padding: 0 0.9rem; }
-
-.map-btn:hover,
-.map-btn:focus-visible {
-  border-color: var(--pink);
-  transform: translateY(-1px);
-  box-shadow: 0 0 16px rgba(255, 46, 154, 0.55), inset 0 0 14px rgba(255, 46, 154, 0.2);
-}
-
-.map-btn:active { transform: scale(0.96); }
-.map-btn:focus-visible { outline: 2px solid var(--turquoise); outline-offset: 2px; }
-
-.map-zoom {
-  margin-left: auto;
-  font-family: var(--font-display);
-  font-size: 1.05rem;
-  letter-spacing: 1.5px;
-  color: var(--turquoise);
-  text-shadow: 0 0 10px rgba(46, 230, 230, 0.5);
-  font-variant-numeric: tabular-nums;
-  white-space: nowrap;
-}
-
-/* Enlarged past the artwork's own pixels, so the readout warns in pink. */
-.map-zoom.is-enlarged {
-  color: var(--pink-soft);
-  text-shadow: 0 0 10px rgba(255, 46, 154, 0.6);
-}
-
-.map-hint {
-  margin-left: 0.9rem;
-  font-size: 0.66rem;
+.bd-card__date {
+  font-size: 0.68rem;
   letter-spacing: 2px;
   text-transform: uppercase;
   color: var(--muted);
 }
 
-/* Map surface ------------------------------------------------------------ */
-.map-viewport {
-  position: relative;
-  /* The map artwork is portrait (473 × 648). The frame keeps that ratio, is
-     never wider than the artwork itself — so the map always shows at its own
-     pixels, never stretched or upscaled — and is capped by the window height. */
-  width: min(100%, 58vh, 473px);
-  margin-inline: auto;
-  aspect-ratio: 473 / 648;
-  overflow: hidden;
-  border-radius: var(--radius);
-  background: radial-gradient(120% 120% at 50% 0%, rgba(14, 111, 174, 0.35), rgba(3, 6, 28, 0.95));
-  border: 1px solid rgba(46, 230, 230, 0.4);
-  box-shadow:
-    inset 0 0 0 1px rgba(255, 46, 154, 0.18),
-    inset 0 0 46px rgba(3, 6, 28, 0.9),
-    0 0 26px rgba(46, 230, 230, 0.18);
-  cursor: grab;
-  touch-action: none;          /* the viewer handles pan and pinch itself */
-  overscroll-behavior: contain;
-  user-select: none;
-  -webkit-user-select: none;
+.bd-card__title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: clamp(1.5rem, 2.6vw, 2rem);
+  letter-spacing: 1px;
 }
 
-.map-viewport.is-dragging { cursor: grabbing; }
+.bd-card__desc {
+  margin: 0;
+  font-size: 0.94rem;
+  line-height: 1.7;
+  color: rgba(255, 255, 255, 0.84);
+}
 
-.map-image {
+.bd-block {
+  padding-top: 0.85rem;
+  border-top: 1px solid rgba(46, 230, 230, 0.18);
+}
+
+.bd-block__title {
+  margin: 0 0 0.5rem;
+  font-family: var(--font-display);
+  font-size: 1.15rem;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--turquoise);
+  text-shadow: 0 0 12px rgba(46, 230, 230, 0.35);
+}
+
+.bd-block__list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+  margin: 0;
+  padding-left: 1.15rem;
+  font-size: 0.9rem;
+  line-height: 1.65;
+  color: rgba(255, 255, 255, 0.84);
+}
+
+.bd-block__list li::marker { color: var(--pink); }
+
+/* Marks anything an official source does not establish. */
+.bd-tag {
+  display: inline-block;
+  margin-right: 0.4rem;
+  padding: 0.05rem 0.45rem;
+  font-family: var(--font-display);
+  font-size: 0.78rem;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: #ffd9ec;
+  background: rgba(194, 0, 111, 0.4);
+  border: 1px solid rgba(255, 46, 154, 0.55);
+  border-radius: 6px;
+  white-space: nowrap;
+}
+
+/* A frame YouTube refuses to play in an embed: the official thumbnail, linked
+   to the video on Rockstar's own channel. The still is served by YouTube. */
+.bd-poster {
+  background-image:
+    linear-gradient(180deg, rgba(5, 10, 43, 0.25), rgba(5, 10, 43, 0.82)),
+    url("https://i.ytimg.com/vi/tJbzMqJGH4k/maxresdefault.jpg");
+  background-size: cover;
+  background-position: center;
+}
+
+.bd-poster__link {
   position: absolute;
   inset: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-  transform-origin: 50% 50%;
-  transition: transform 0.26s cubic-bezier(0.22, 1, 0.36, 1);
-  will-change: transform;
-  pointer-events: none;        /* the viewport handles every gesture */
-}
-
-.map-viewport.is-dragging .map-image { transition: none; }
-
-.map-empty {
-  position: absolute;
-  inset: auto clamp(1rem, 4vw, 3rem) auto;
-  top: 50%;
-  transform: translateY(-50%);
-  margin: 0;
-  padding: 0.8rem 1rem;
-  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  padding: 1rem;
+  color: var(--white);
+  text-decoration: none;
   text-align: center;
-  font-size: 0.85rem;
-  color: #ffe3f2;
-  background: rgba(194, 0, 111, 0.28);
-  border: 1px solid rgba(255, 46, 154, 0.5);
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
-/* Provenance and credits ------------------------------------------------ */
-.map-credit {
-  margin-top: clamp(0.9rem, 2vw, 1.25rem);
+.bd-poster__link:hover,
+.bd-poster__link:focus-visible {
+  background-color: rgba(255, 46, 154, 0.22);
+  color: var(--white);
+}
+
+.bd-poster__play {
+  display: grid;
+  place-items: center;
+  width: 3.25rem;
+  height: 3.25rem;
+  padding-left: 0.2rem;
+  font-size: 1.25rem;
+  color: var(--white);
+  border: 2px solid rgba(255, 255, 255, 0.85);
+  border-radius: 50%;
+  background: rgba(194, 0, 111, 0.7);
+  box-shadow: 0 0 22px rgba(255, 46, 154, 0.6);
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.bd-poster__link:hover .bd-poster__play,
+.bd-poster__link:focus-visible .bd-poster__play {
+  transform: scale(1.08);
+  box-shadow: 0 0 30px rgba(255, 46, 154, 0.9);
+}
+
+.bd-poster__label {
+  font-family: var(--font-display);
+  font-size: 1.05rem;
+  letter-spacing: 1.5px;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.8);
+}
+
+.bd-poster__link:focus-visible { outline: 2px solid var(--turquoise); outline-offset: -4px; }
+
+.bd-card__note {
+  margin: 0;
+  padding: 0.65rem 0.8rem;
   font-size: 0.82rem;
-  line-height: 1.7;
-  color: rgba(255, 255, 255, 0.78);
+  line-height: 1.6;
+  color: rgba(255, 255, 255, 0.82);
+  border-left: 3px solid var(--pink);
+  border-radius: 0 8px 8px 0;
+  background: rgba(194, 0, 111, 0.18);
 }
 
-.map-credit p { margin: 0 0 0.6rem; }
-.map-credit p:last-child { margin-bottom: 0; }
-.map-credit strong { color: var(--white); }
-.map-credit em { font-style: normal; color: var(--pink-soft); }
+.bd-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.7rem 1rem;
+  margin-top: 0.15rem;
+}
 
-.map-credit a {
+.bd-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.6rem 1.1rem;
+  font-family: var(--font-display);
+  font-size: 1.05rem;
+  letter-spacing: 1.5px;
+  color: var(--white);
+  text-decoration: none;
+  border: 1px solid rgba(255, 46, 154, 0.6);
+  border-radius: 10px;
+  background: linear-gradient(160deg, rgba(194, 0, 111, 0.6), rgba(11, 27, 77, 0.9));
+  box-shadow: inset 0 0 14px rgba(255, 46, 154, 0.18), 0 8px 22px rgba(0, 0, 0, 0.35);
+  transition: transform 0.2s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+}
+
+.bd-btn:hover,
+.bd-btn:focus-visible {
+  transform: translateY(-2px);
+  border-color: var(--pink);
+  box-shadow: 0 0 20px rgba(255, 46, 154, 0.55), inset 0 0 16px rgba(255, 46, 154, 0.25);
+}
+
+.bd-btn:active { transform: scale(0.97); }
+.bd-btn:focus-visible { outline: 2px solid var(--turquoise); outline-offset: 2px; }
+
+.bd-source { margin: 0; font-size: 0.75rem; color: rgba(255, 255, 255, 0.62); }
+
+.bd-source a,
+.breakdown__note a {
   color: var(--turquoise);
   text-decoration: none;
   border-bottom: 1px solid rgba(46, 230, 230, 0.4);
 }
 
-.map-credit a:hover,
-.map-credit a:focus-visible { color: var(--white); border-color: var(--pink); }
+.bd-source a:hover,
+.bd-source a:focus-visible,
+.breakdown__note a:hover,
+.breakdown__note a:focus-visible { color: var(--white); border-color: var(--pink); }
 
-.map-credit__note { font-size: 0.75rem; color: rgba(255, 255, 255, 0.6); }
-
-/* Fullscreen mode (Fullscreen API, button in the toolbar) ----------------- */
-.map-shell:fullscreen {
-  width: 100%;
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  padding: clamp(0.6rem, 2vw, 1.2rem);
-  border-radius: 0;
-  background: linear-gradient(160deg, #081338, #03061c);
+.breakdown__note {
+  margin: clamp(1.5rem, 3vw, 2.25rem) 0 0;
+  font-size: 0.82rem;
+  line-height: 1.75;
+  color: rgba(255, 255, 255, 0.72);
 }
 
-.map-shell:-webkit-full-screen {
-  width: 100%;
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  padding: clamp(0.6rem, 2vw, 1.2rem);
-  border-radius: 0;
-  background: linear-gradient(160deg, #081338, #03061c);
-}
-
-.map-shell:fullscreen .map-viewport,
-.map-shell:-webkit-full-screen .map-viewport {
-  flex: 1 1 auto;
-  width: 100%;
-  max-height: none;
-  aspect-ratio: auto;
-  margin: 0;
-}
-
-.map-shell:fullscreen .map-toolbar,
-.map-shell:-webkit-full-screen .map-toolbar {
-  position: static;
-}
-
-.map-shell:fullscreen .map-credit,
-.map-shell:-webkit-full-screen .map-credit {
-  margin-top: 0.75rem;
-  font-size: 0.78rem;
-}
-
+.breakdown__note strong { color: var(--white); }
 /* 11) Footer ------------------------------------------------------------- */
 .site-footer {
   position: relative;
@@ -1264,6 +1292,7 @@ html:not(.js) .player__stage { display: none; }
 @media (max-width: 900px) {
   .cast { grid-template-columns: minmax(0, 1fr); }
   .trailer-grid { grid-template-columns: minmax(0, 1fr); }
+  .breakdown-grid { grid-template-columns: minmax(0, 1fr); }
   .hero { min-height: auto; }
   .cinematic { min-height: clamp(460px, 78vh, 720px); }
 }
@@ -1280,8 +1309,8 @@ html:not(.js) .player__stage { display: none; }
   .today time { font-size: 1.05rem; }
   .countdown { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.7rem; }
   .cast-card__name { font-size: 2.3rem; }
-  .map-hint { display: none; }
-  .map-credit { font-size: 0.8rem; }
+  .bd-card__desc { font-size: 0.9rem; }
+  .bd-block__list { font-size: 0.86rem; }
 }
 
 @media (max-width: 430px) {
@@ -1293,10 +1322,9 @@ html:not(.js) .player__stage { display: none; }
   .player__glyph { width: 20px; height: 20px; }
   .player__label { letter-spacing: 2px; }
   .player__title { font-size: 0.78rem; }
-  .map-toolbar { gap: 0.4rem; }
-  .map-btn { min-width: 38px; height: 38px; font-size: 1.2rem; }
-  .map-btn--wide { font-size: 0.92rem; letter-spacing: 0.5px; padding: 0 0.6rem; }
-  .map-credit { font-size: 0.78rem; }
+  .bd-card__no { font-size: 1.3rem; }
+  .bd-btn { padding: 0.55rem 0.9rem; font-size: 0.98rem; }
+  .breakdown__note { font-size: 0.78rem; }
   .site-footer__sub { letter-spacing: 3px; }
 }
 
