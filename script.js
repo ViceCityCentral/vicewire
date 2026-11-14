@@ -341,7 +341,8 @@
         events: {
           onReady: function () {
             ready = true;
-            ytPlayer.setVolume(CONFIG.music.volume);
+            // Honour a volume the visitor already chose while the frame was shut.
+            ytPlayer.setVolume(volume ? toPlayer(volume.value) : CONFIG.music.volume);
             if (playWhenReady) {          // the visitor clicked before we were ready
               playWhenReady = false;
               ytPlayer.playVideo();
