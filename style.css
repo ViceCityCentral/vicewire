@@ -4,6 +4,7 @@
              6) cinematic key-art banner 7) trailers 8) countdown hero
              9) meet the characters 10) explore Leonida map 11) footer
              12) animations 13) background music player 14) responsive
+             15) copyright & credits
    ========================================================================== */
 
 /* 1) Design tokens ------------------------------------------------------- */
@@ -1295,4 +1296,122 @@ html.js .map-shell[data-reveal].is-revealed {
   .today { padding: 0.3rem 0.6rem; }
   .today__label { display: none; }
   .player__vol-label { display: none; }
+}
+
+/* 15) Copyright & credits ------------------------------------------------ */
+/* Additive block: the COPYRIGHT & CREDITS section and the footer's legal
+   notice. It reuses the existing tokens, section chrome and scroll-reveal
+   animation, and changes nothing that was already on the page. */
+.credits-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: clamp(1rem, 2.5vw, 1.75rem);
+  align-items: start;
+}
+
+.credit-card {
+  padding: clamp(1.1rem, 2.6vw, 1.6rem) clamp(1.1rem, 2.6vw, 1.7rem);
+  border-radius: var(--radius);
+  background: linear-gradient(170deg, rgba(14, 111, 174, 0.18), rgba(5, 10, 43, 0.9) 60%, rgba(3, 6, 28, 0.95));
+  border: 1px solid rgba(46, 230, 230, 0.24);
+  box-shadow: 0 18px 44px rgba(0, 0, 0, 0.42), inset 0 0 32px rgba(46, 230, 230, 0.06);
+  transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1),
+              border-color 0.5s ease, box-shadow 0.5s ease, opacity 0.8s ease;
+}
+
+/* Matches the character cards: hidden only while scripting can reveal it. */
+html.js .credit-card[data-reveal] { opacity: 0; transform: translateY(26px); }
+
+.credit-card.is-revealed,
+html.js .credit-card[data-reveal].is-revealed { opacity: 1; transform: none; }
+
+/* The revealed rules out-specify a plain :hover, so the lift names them too. */
+.credit-card.is-revealed:hover,
+html.js .credit-card[data-reveal].is-revealed:hover {
+  transform: translateY(-4px);
+  border-color: rgba(255, 46, 154, 0.5);
+  box-shadow: 0 22px 52px rgba(0, 0, 0, 0.48), inset 0 0 36px rgba(255, 46, 154, 0.08);
+}
+
+.credit-card__title {
+  margin: 0 0 0.8rem;
+  font-family: var(--font-display);
+  font-size: clamp(1.35rem, 3.4vw, 1.85rem);
+  letter-spacing: 2.5px;
+  line-height: 1.05;
+  color: var(--white);
+  text-shadow: 0 0 14px rgba(46, 230, 230, 0.4);
+}
+
+/* Thin cyan-to-pink rule under each card heading. */
+.credit-card__title::after {
+  content: "";
+  display: block;
+  width: 54px;
+  height: 2px;
+  margin-top: 0.6rem;
+  border-radius: 999px;
+  background: linear-gradient(90deg, var(--turquoise), var(--pink));
+  box-shadow: 0 0 10px rgba(255, 46, 154, 0.6);
+}
+
+.credit-card__body {
+  margin: 0 0 0.7rem;
+  font-size: 0.9rem;
+  line-height: 1.65;
+  color: var(--muted);
+}
+
+.credit-card__body:last-child { margin-bottom: 0; }
+
+.credit-card__list {
+  margin: 0;
+  padding-left: 1.1rem;
+  font-size: 0.86rem;
+  line-height: 1.65;
+  color: var(--muted);
+}
+
+.credit-card__list li + li { margin-top: 0.5rem; }
+
+.credit-card a {
+  color: var(--turquoise);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  overflow-wrap: anywhere;
+}
+
+.credit-card a:hover { color: var(--pink-soft); }
+
+.credit-card code {
+  padding: 0.08em 0.34em;
+  border-radius: 5px;
+  background: rgba(46, 230, 230, 0.1);
+  border: 1px solid rgba(46, 230, 230, 0.18);
+  color: var(--white);
+  font-size: 0.84em;
+  overflow-wrap: anywhere;
+}
+
+.credit-card strong { color: var(--white); }
+
+/* Footer legal notice: the footer's own type scale and colour, set apart by a
+   hairline rule so the existing footer lines above it stay exactly as they were. */
+.site-footer__legal {
+  max-width: 62ch;
+  margin: 1.6rem auto 0;
+  padding-top: 1.2rem;
+  border-top: 1px solid rgba(46, 230, 230, 0.16);
+  font-size: 0.68rem;
+  letter-spacing: 0.6px;
+  line-height: 1.7;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.site-footer__legal p { margin: 0; }
+.site-footer__legal p + p { margin-top: 0.7rem; }
+
+@media (max-width: 620px) {
+  .credits-grid { grid-template-columns: 1fr; }
+  .credit-card__list { font-size: 0.82rem; }
 }
