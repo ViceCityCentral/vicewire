@@ -1,8 +1,8 @@
 /* ==========================================================================
    GTA VI · Vice City Countdown — stylesheet
-   Sections: 1) tokens 2) base 3) backdrop 4) header 5) trailers
-             6) countdown hero 7) quotes + diamond button 8) footer
-             9) animations 10) responsive
+   Sections: 1) tokens 2) base 3) backdrop 4) header 5) shared section chrome
+             6) cinematic key-art banner 7) trailers 8) countdown hero
+             9) quotes + diamond button 10) footer 11) animations 12) responsive
    ========================================================================== */
 
 /* 1) Design tokens ------------------------------------------------------- */
@@ -31,7 +31,11 @@
   --radius: 18px;
   --wrap: 1240px;
 
-  /* Swap in your own GTA VI promotional artwork here — one line. */
+  /* Top cinematic banner — official GTA VI key art (landscape / portrait). */
+  --banner-image:        url("assets/gta-vi-hero.jpg");
+  --banner-image-mobile: url("assets/gta-vi-hero-mobile.jpg");
+
+  /* Countdown illustration. Swap in your own GTA VI artwork here — one line. */
   --hero-image: url("assets/vice-bg.svg");
 }
 
@@ -215,7 +219,197 @@ a { color: var(--turquoise); }
   text-shadow: var(--glow-pink);
 }
 
-/* 6) Trailers ----------------------------------------------------------- */
+/* 6) Cinematic key-art banner ------------------------------------------- */
+/* Full-bleed GTA VI promotional artwork at the very top of the page. */
+.cinematic {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  display: grid;
+  place-items: center;
+  min-height: clamp(540px, 86vh, 920px);
+  width: 100%;
+  text-align: center;
+  border-bottom: 1px solid rgba(46, 230, 230, 0.18);
+}
+
+.cinematic__bg {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background-image: var(--banner-image);
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  transform: scale(1.04);
+  animation: kenburns 44s ease-in-out infinite alternate;
+}
+
+/* Subtle dark overlay: keeps the text readable without hiding the artwork. */
+.cinematic__overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background:
+    linear-gradient(180deg,
+      rgba(5, 10, 43, 0.74) 0%,
+      rgba(5, 10, 43, 0.38) 34%,
+      rgba(5, 10, 43, 0.58) 76%,
+      var(--deep) 100%),
+    linear-gradient(90deg,
+      rgba(9, 22, 74, 0.55) 0%,
+      rgba(5, 10, 43, 0.10) 48%,
+      rgba(46, 6, 60, 0.52) 100%);
+}
+
+.cinematic__vignette {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  background: radial-gradient(120% 92% at 50% 44%, transparent 28%, rgba(3, 6, 28, 0.6) 100%);
+}
+
+.cinematic__inner {
+  position: relative;
+  z-index: 3;
+  width: min(100% - clamp(2rem, 8vw, 5rem), 900px);
+  padding-block: clamp(4rem, 10vh, 8rem);
+  display: grid;
+  justify-items: center;
+  gap: 0.35rem;
+}
+
+.cinematic__kicker {
+  margin: 0 0 0.2rem;
+  font-size: 0.7rem;
+  letter-spacing: 6px;
+  text-transform: uppercase;
+  color: var(--turquoise);
+  text-shadow: var(--glow-cyan);
+}
+
+.cinematic__mark {
+  margin: 0;
+  font-family: var(--font-neon);
+  font-size: clamp(3.4rem, 12vw, 7rem);
+  line-height: 0.95;
+  color: var(--white);
+  text-shadow:
+    0 0 10px rgba(255, 255, 255, 0.55),
+    var(--glow-pink),
+    0 0 60px rgba(46, 230, 230, 0.45);
+  animation: neonFlicker 7s ease-in-out infinite;
+}
+
+.cinematic__title {
+  margin: 0;
+  font-family: var(--font-script);
+  font-size: clamp(1.9rem, 5.2vw, 3.4rem);
+  font-weight: 400;
+  line-height: 1.1;
+  color: var(--white);
+  text-shadow: 0 2px 22px rgba(3, 6, 30, 0.85);
+}
+
+.cinematic__tag {
+  margin: 0.55rem 0 0;
+  max-width: 46ch;
+  font-size: clamp(0.9rem, 2.4vw, 1.05rem);
+  color: rgba(255, 255, 255, 0.86);
+  text-shadow: 0 1px 14px rgba(3, 6, 30, 0.9);
+}
+
+.cinematic__date {
+  margin: 0.9rem 0 0;
+  font-family: var(--font-display);
+  font-size: clamp(1.05rem, 3vw, 1.5rem);
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--turquoise);
+  text-shadow: var(--glow-cyan);
+}
+
+.cinematic__actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.85rem;
+  margin-top: 1.6rem;
+}
+
+.cta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 46px;
+  padding: 0.7rem 1.6rem;
+  border-radius: 999px;
+  font-family: var(--font-display);
+  font-size: 1.05rem;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  text-decoration: none;
+  transition: transform 0.25s ease, box-shadow 0.25s ease, background-color 0.25s ease;
+}
+
+.cta--pink {
+  color: var(--white);
+  background: linear-gradient(135deg, var(--pink-soft) 0%, var(--pink) 55%, var(--pink-deep) 100%);
+  box-shadow: var(--glow-pink), 0 10px 30px rgba(194, 0, 111, 0.35);
+}
+
+.cta--pink:hover,
+.cta--pink:focus-visible {
+  transform: translateY(-2px) scale(1.03);
+  box-shadow: 0 0 12px rgba(255, 46, 154, 1), 0 0 44px rgba(255, 46, 154, 0.7);
+}
+
+.cta--ghost {
+  color: var(--white);
+  background: rgba(5, 10, 43, 0.35);
+  border: 1px solid rgba(46, 230, 230, 0.65);
+  box-shadow: inset 0 0 22px rgba(46, 230, 230, 0.12);
+  backdrop-filter: blur(6px);
+}
+
+.cta--ghost:hover,
+.cta--ghost:focus-visible {
+  transform: translateY(-2px) scale(1.03);
+  background: rgba(46, 230, 230, 0.16);
+  box-shadow: var(--glow-cyan);
+}
+
+.cinematic__cue {
+  position: absolute;
+  z-index: 3;
+  bottom: clamp(0.9rem, 3vh, 1.8rem);
+  left: 50%;
+  transform: translateX(-50%);
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  background: rgba(5, 10, 43, 0.35);
+  animation: riseIn 1.2s ease both;
+}
+
+.cinematic__cue-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--pink);
+  box-shadow: var(--glow-pink);
+  animation: cueBob 1.8s ease-in-out infinite;
+}
+
+@keyframes cueBob {
+  0%, 100% { transform: translateY(-3px); opacity: 0.75; }
+  50%      { transform: translateY(3px);  opacity: 1; }
+}
+
+/* 7) Trailers ----------------------------------------------------------- */
 .trailer-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -269,7 +463,7 @@ a { color: var(--turquoise); }
 
 .trailer__name { font-size: 0.95rem; font-weight: 600; color: var(--white); }
 
-/* 7) Countdown hero ----------------------------------------------------- */
+/* 8) Countdown hero ----------------------------------------------------- */
 .hero {
   position: relative;
   isolation: isolate;
@@ -402,7 +596,7 @@ a { color: var(--turquoise); }
   animation: shimmer 3s linear infinite, pop 1s cubic-bezier(0.2, 0.8, 0.2, 1) both;
 }
 
-/* 8) Quotes ------------------------------------------------------------- */
+/* 9) Quotes ------------------------------------------------------------- */
 .quote-card {
   position: relative;
   max-width: 900px;
@@ -526,7 +720,7 @@ a { color: var(--turquoise); }
   color: var(--muted);
 }
 
-/* 9) Footer ------------------------------------------------------------- */
+/* 10) Footer ------------------------------------------------------------- */
 .site-footer {
   padding: 2.5rem clamp(1rem, 4vw, 2rem) 3rem;
   text-align: center;
@@ -537,7 +731,7 @@ a { color: var(--turquoise); }
 
 .site-footer p { margin: 0.25rem 0; }
 
-/* 10) Animations --------------------------------------------------------- */
+/* 11) Animations --------------------------------------------------------- */
 @keyframes kenburns {
   from { transform: scale(1.04) translate3d(0, 0, 0); }
   to   { transform: scale(1.16) translate3d(-1.5%, -1.5%, 0); }
@@ -578,14 +772,22 @@ a { color: var(--turquoise); }
   html { scroll-behavior: auto; }
 }
 
-/* 11) Responsive --------------------------------------------------------- */
+/* 12) Responsive --------------------------------------------------------- */
 @media (max-width: 900px) {
   .trailer-grid { grid-template-columns: minmax(0, 1fr); }
   .hero { min-height: auto; }
+  .cinematic { min-height: clamp(460px, 78vh, 720px); }
+}
+
+/* Portrait key art for phones — same breakpoint as the preload in index.html. */
+@media (max-width: 700px) {
+  .cinematic__bg { background-image: var(--banner-image-mobile); }
 }
 
 @media (max-width: 620px) {
   .brand__sub { display: none; }
+  .cinematic__inner { padding-block: clamp(3rem, 9vh, 5rem); }
+  .cinematic__cue { display: none; }
   .today time { font-size: 1.05rem; }
   .countdown { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.7rem; }
   .quote-card__mark { font-size: 5rem; }

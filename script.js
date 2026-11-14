@@ -95,13 +95,16 @@
   }
 
   function describeRelease() {
+    const formatted = CONFIG.releaseDate.toLocaleDateString("en-GB", {
+      day: "numeric", month: "long", year: "numeric"
+    });
+
     const el = $("releaseLabel");
-    if (!el) return;
-    el.textContent =
-      "Releases " +
-      CONFIG.releaseDate.toLocaleDateString("en-GB", {
-        day: "numeric", month: "long", year: "numeric"
-      });
+    if (el) el.textContent = "Releases " + formatted;
+
+    // Keep the banner date in sync with the countdown's single source of truth.
+    const heroDate = $("heroDate");
+    if (heroDate) heroDate.textContent = formatted;
   }
 
   /* 4) Quotes ------------------------------------------------------------ */

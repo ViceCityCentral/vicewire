@@ -14,6 +14,10 @@
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Kaushan+Script&family=Monoton&family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet" />
 
   <link rel="stylesheet" href="style.css" />
+
+  <!-- Hero key art: preloaded with the same breakpoints used in style.css -->
+  <link rel="preload" as="image" href="assets/gta-vi-hero.jpg" media="(min-width: 701px)" fetchpriority="high" />
+  <link rel="preload" as="image" href="assets/gta-vi-hero-mobile.jpg" media="(max-width: 700px)" fetchpriority="high" />
 </head>
 <body>
   <!-- Ambient neon background -->
@@ -40,6 +44,38 @@
   </header>
 
   <main id="top">
+    <!-- ===== Cinematic GTA VI key-art banner ===== -->
+    <section class="cinematic" id="cinematic" aria-labelledby="cinematicTitle">
+      <!-- Official key art, cover-fitted. Swappable: see --banner-image in style.css -->
+      <div class="cinematic__bg" aria-hidden="true"></div>
+      <div class="cinematic__overlay" aria-hidden="true"></div>
+      <div class="cinematic__vignette" aria-hidden="true"></div>
+
+      <div class="cinematic__inner">
+        <p class="cinematic__kicker">Rockstar Games</p>
+
+        <p class="cinematic__mark" aria-hidden="true">VI</p>
+        <h2 class="cinematic__title" id="cinematicTitle">Vice City is calling</h2>
+
+        <p class="cinematic__tag">
+          Jason and Lucia in the neon-soaked streets of Vice City, state of Leonida.
+        </p>
+
+        <p class="cinematic__date">
+          Coming <time id="heroDate" datetime="2026-11-19">19 November 2026</time>
+        </p>
+
+        <div class="cinematic__actions">
+          <a class="cta cta--pink" href="#countdown">Countdown to launch</a>
+          <a class="cta cta--ghost" href="#trailers">Watch the trailers</a>
+        </div>
+      </div>
+
+      <a class="cinematic__cue" href="#trailers" aria-label="Scroll to the trailers">
+        <span class="cinematic__cue-dot" aria-hidden="true"></span>
+      </a>
+    </section>
+
     <!-- ===== A. Trailers ===== -->
     <section class="section trailers" id="trailers" aria-labelledby="trailersTitle">
       <div class="section__head">
