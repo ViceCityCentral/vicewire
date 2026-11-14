@@ -3,7 +3,7 @@
    Sections: 1) tokens 2) base 3) backdrop 4) header 5) shared section chrome
              6) cinematic key-art banner 7) trailers 8) countdown hero
              9) meet the characters 10) explore Leonida map 11) footer
-             12) animations 13) background music player 14) responsive
+             12) animations 13) official music player 14) responsive
              15) copyright & credits
    ========================================================================== */
 
@@ -1045,7 +1045,7 @@ html.js .map-shell[data-reveal].is-revealed {
   html { scroll-behavior: auto; }
 }
 
-/* 13) Official music player (audio only) --------------------------------- */
+/* 13) Official music player ---------------------------------------------- */
 .player {
   position: fixed;
   right: clamp(0.75rem, 2.2vw, 1.5rem);
@@ -1054,7 +1054,7 @@ html.js .map-shell[data-reveal].is-revealed {
   display: flex;
   flex-direction: column;
   gap: 0.6rem;
-  width: min(238px, calc(100vw - 1.25rem));
+  width: min(300px, calc(100vw - 1.25rem));
   padding: 0.7rem;
   border-radius: 16px;
   background: linear-gradient(155deg, rgba(11, 27, 77, 0.94), rgba(5, 10, 43, 0.96));
@@ -1076,23 +1076,29 @@ html.js .map-shell[data-reveal].is-revealed {
     0 0 26px rgba(255, 46, 154, 0.4);
 }
 
-/* The playback source is kept out of sight on purpose: this card is audio only,
-   so no video frame and no thumbnail are ever shown. The box stays rendered
-   (opacity, not display/visibility) so the official players keep working, and
-   it never catches a click meant for the card. */
+/* YouTube's own player sits here in full view: nothing is hidden, clipped or
+   covered, and it takes every click meant for it, so YouTube's controls,
+   title and branding stay reachable — as YouTube's embedding rules require. */
 .player__stage {
-  position: absolute;
-  right: 0;
-  bottom: 0;
-  width: 200px;
-  height: 200px;
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 9;
   overflow: hidden;
-  opacity: 0;
-  pointer-events: none;
+  border-radius: 12px;
+  border: 1px solid rgba(46, 230, 230, 0.3);
+  background: rgba(3, 6, 28, 0.9);
+  box-shadow: inset 0 0 18px rgba(46, 230, 230, 0.12);
 }
 
+/* Without JavaScript there is no player to build, so the empty box stays hidden
+   and the visitor sees the link to the official upload instead. */
+html:not(.js) .player__stage { display: none; }
+
+/* YouTube's IFrame Player API replaces #musicStage with its own iframe, so the
+   fill rule is written for both: the placeholder it is handed and the iframe
+   that takes its place. The player therefore always fills the 16:9 box. */
 .player__yt,
-.player__audio {
+.player__stage > iframe {
   display: block;
   width: 100%;
   height: 100%;
@@ -1249,9 +1255,10 @@ html.js .map-shell[data-reveal].is-revealed {
 .player__error { margin: 0; font-size: 0.72rem; color: var(--pink-soft); }
 .player.has-error .player__eq { display: none; }
 
-/* The player is fixed, so the footer keeps room to clear it (the card is about
-   185px tall, including the slim official audio bar). */
-.site-footer { padding-bottom: 13.5rem; }
+/* The player is fixed, so the footer keeps room to clear it. The card is taller
+   than it used to be because YouTube's own player is shown in full: about 260px
+   on a desktop and 225px on a phone, plus the error line if playback is refused. */
+.site-footer { padding-bottom: 22rem; }
 
 /* 14) Responsive --------------------------------------------------------- */
 @media (max-width: 900px) {
@@ -1278,9 +1285,10 @@ html.js .map-shell[data-reveal].is-revealed {
 }
 
 @media (max-width: 430px) {
-  /* The player card stays narrow enough to leave the page readable. */
-  .player { width: min(224px, calc(100vw - 1rem)); gap: 0.5rem; padding: 0.6rem; }
-  .site-footer { padding-bottom: 14.5rem; }
+  /* The player card stays narrow enough to leave the page readable, while the
+     official player inside it stays large enough to be usable. */
+  .player { width: min(262px, calc(100vw - 1rem)); gap: 0.5rem; padding: 0.6rem; }
+  .site-footer { padding-bottom: 20rem; }
   .player__toggle { width: 42px; height: 42px; }
   .player__glyph { width: 20px; height: 20px; }
   .player__label { letter-spacing: 2px; }

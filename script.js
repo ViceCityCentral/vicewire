@@ -16,19 +16,19 @@
     releaseDate: new Date("2026-11-19T00:00:00"),
 
     /* Officially released GTA VI music, streamed by the rights holders' own
-       official player. No audio file is bundled, downloaded, extracted or
-       re-uploaded: YouTube's own player streams the track and this page only
-       sends it play/pause/volume commands through that player's API. The player
-       itself is kept out of sight (see .player__stage in style.css), so the
-       card is audio only — no video frame and no thumbnail.
+       official player, shown in full. No audio file is bundled, downloaded,
+       extracted or re-uploaded: YouTube's own player streams the track, the
+       page only sends it play/pause/volume commands through that player's API,
+       and YouTube's controls, title and branding are left untouched.
 
        "Flower In A Hurricane" — Justice featuring Tame Impala, SZA and King
        Gizzard & the Lizard Wizard — is the first single from the game and this
        is the official upload. Change videoId/watchUrl/title for another official
        upload and the play/pause button, the volume slider and the title follow.
 
-       If YouTube refuses to play here, the same controls fall back once to the
-       track's official SoundCloud upload before any error message is shown. */
+       There is no second audio source: if YouTube refuses to play, the card
+       says so and links to the track's official page rather than streaming the
+       song from anywhere else. */
     music: {
       videoId: "5dPwBWvmcbQ",
       iframeApi: "https://www.youtube.com/iframe_api",
@@ -36,17 +36,7 @@
       watchUrl: "https://www.youtube.com/watch?v=5dPwBWvmcbQ",
       title: "Flower In A Hurricane — Justice",
       volume: 45,           // 0-100, and the volume slider's starting position
-      startTimeoutMs: 5000, // how long a play request may stay silent before we hint
-
-      // Official fallback player, loaded only if YouTube refuses to play.
-      fallback: {
-        trackUrl: "https://soundcloud.com/justice-official/flower-in-a-hurricane-feat",
-        widgetApi: "https://w.soundcloud.com/player/api.js",
-        src: "https://w.soundcloud.com/player/?url=https%3A%2F%2Fapi.soundcloud.com%2Ftracks%2F2418269610" +
-             "&color=%23ff2e9a&auto_play=false&hide_related=true&show_comments=false" +
-             "&show_user=false&show_artwork=false&show_playcount=false&show_reposts=false" +
-             "&show_teaser=false&sharing=false&download=false&buying=false&liking=false&visual=false"
-      }
+      startTimeoutMs: 5000  // how long a play request may stay silent before we hint
     }
   };
 
@@ -122,21 +112,15 @@
     if (heroDate) heroDate.textContent = formatted;
   }
 
-  /* 4) Official music player (audio only) --------------------------------
-     The track is streamed by the rights holders' own official player and this
-     card only drives it: the visitor's play/pause button and volume slider
-     mirror the real playback state, and the card stays audio only — no video
-     frame and no thumbnail anywhere. Nothing is downloaded or re-hosted.
-
-     Two official sources, in order: YouTube's IFrame player (the official
-     upload of the single) and, only if YouTube refuses to play here, the
-     track's official SoundCloud upload. */
+  /* 4) Official music player ----------------------------------------------
+     YouTube's own player, shown in full inside the card, streams the track.
+     The visitor's pink play/pause button and volume slider drive that same
+     player through YouTube's official IFrame Player API and mirror its real
+     state; nothing is downloaded, extracted or re-hosted, and YouTube's
+     controls, title and branding stay exactly as YouTube renders them. */
   function initMusicPlayer() {
     const player = $("musicPlayer");
     const stage = $("musicStage");
-    // The hidden box the stage lives in. YouTube's API replaces the stage div
-    // it is given, so the fallback player is put in the box instead.
-    const stageBox = stage ? stage.parentElement : null;
     const toggle = $("musicToggle");
     const volume = $("musicVolume");
     const error = $("musicError");
@@ -150,12 +134,6 @@
     let ytReady = false;
     let ytFailed = false;
 
-    let sc = null;             // SoundCloud widget, the fallback
-    let scFrame = null;
-    let scReady = false;
-    let scWatchdog = 0;
-
-    let source = "youtube";    // which source the controls drive right now
     let wantPlay = false;      // the visitor has asked for sound
     let playWhenReady = false; // play was pressed before the player was up
     let playing = false;       // last state reported by the live player
@@ -183,11 +161,10 @@
       if (error) error.hidden = true;
     }
 
-    // Only for the case where no official source will play at all.
+    // Only for the case where YouTube's own player will not run at all.
     function giveUpMarkup() {
-      return "Official music can\u2019t play here right now \u2014 open the track on " +
-        '<a class="player__external" href="' + MUSIC.watchUrl + '" target="_blank" rel="noopener noreferrer">YouTube</a> ' +
-        'or <a class="player__external" href="' + MUSIC.fallback.trackUrl + '" target="_blank" rel="noopener noreferrer">SoundCloud</a>.';
+      return "The official player can\u2019t start here right now \u2014 open the track on " +
+        '<a class="player__external" href="' + MUSIC.watchUrl + '" target="_blank" rel="noopener noreferrer">YouTube</a>.';
     }
 
     // A play request that never turns into sound is nearly always the browser's
@@ -220,48 +197,26 @@
     function requestPlay() {
       clearError();
       wantPlay = true;
-      if (source === "youtube") {
-        if (!ytReady) {
-          playWhenReady = true;
-          loadYouTubeApi();
-          return;
-        }
-        try {
-          if (typeof yt.isMuted === "function" && yt.isMuted() && typeof yt.unMute === "function") yt.unMute();
-          yt.setVolume(wantedVolume);
-          yt.playVideo();
-          armWatchdog();
-        } catch (err) {
-          failOver("youtube");
-        }
+      if (!ytReady) {
+        playWhenReady = true;
+        loadYouTubeApi();
         return;
       }
-      if (source === "soundcloud") {
-        if (!scReady) {
-          playWhenReady = true;
-          loadWidgetApi();
-          return;
-        }
-        try {
-          sc.setVolume(wantedVolume);
-          sc.play();
-          armWatchdog();
-        } catch (err) {
-          failOver("soundcloud");
-        }
+      try {
+        if (typeof yt.isMuted === "function" && yt.isMuted() && typeof yt.unMute === "function") yt.unMute();
+        yt.setVolume(wantedVolume);
+        yt.playVideo();
+        armWatchdog();
+      } catch (err) {
+        failOver();
       }
     }
 
     function requestPause() {
       wantPlay = false;
       clearTimeout(watchdog);
-      if (source === "youtube" && ytReady) {
-        try { yt.pauseVideo(); } catch (err) { /* the player is gone */ }
-        return;
-      }
-      if (source === "soundcloud" && scReady && sc) {
-        try { sc.pause(); } catch (err) { /* the widget is gone */ }
-      }
+      if (!ytReady) return;
+      try { yt.pauseVideo(); } catch (err) { /* the player is gone */ }
     }
 
     function togglePlayback() {
@@ -274,16 +229,12 @@
     if (volume) {
       volume.addEventListener("input", function () {
         wantedVolume = Math.round(Math.min(1, Math.max(0, Number(volume.value) || 0)) * 100);
-        if (source === "youtube" && ytReady) {
-          try { yt.setVolume(wantedVolume); } catch (err) { /* nothing to set */ }
-        }
-        if (source === "soundcloud" && scReady && sc) {
-          try { sc.setVolume(wantedVolume); } catch (err) { /* nothing to set */ }
-        }
+        if (!ytReady) return;
+        try { yt.setVolume(wantedVolume); } catch (err) { /* nothing to set */ }
       });
     }
 
-    /* Source 1: YouTube's own player --------------------------------------- */
+    /* YouTube's own player -------------------------------------------------- */
     function loadYouTubeApi() {
       if (yt || ytFailed) return;
       if (window.YT && window.YT.Player) {
@@ -302,13 +253,13 @@
       const script = document.createElement("script");
       script.id = "ytIframeApi";
       script.src = MUSIC.iframeApi;
-      script.onerror = function () { failOver("youtube"); };
+      script.onerror = function () { failOver(); };
       document.head.appendChild(script);
     }
 
     function buildYouTubePlayer() {
       if (yt || ytFailed || !window.YT || !window.YT.Player) {
-        if (!window.YT || !window.YT.Player) failOver("youtube");
+        if (!window.YT || !window.YT.Player) failOver();
         return;
       }
       yt = new window.YT.Player(stage.id, {
@@ -317,21 +268,28 @@
         playerVars: {
           origin: window.location.origin,
           playsinline: 1,
-          controls: 0,
-          disablekb: 1,
-          rel: 0,
-          modestbranding: 1
+          // YouTube's own controls stay on screen and usable: this page never
+          // hides, restyles or disables the player it embeds.
+          controls: 1,
+          rel: 0
         },
         events: {
           onReady: onYouTubeReady,
           onStateChange: onYouTubeState,
-          onError: function () { failOver("youtube"); }
+          onError: function () { failOver(); }
         }
       });
     }
 
     function onYouTubeReady() {
       ytReady = true;
+      try {
+        // YouTube's generated iframe carries no accessible name of its own.
+        const frame = typeof yt.getIframe === "function" ? yt.getIframe() : null;
+        if (frame && !frame.getAttribute("title")) {
+          frame.setAttribute("title", MUSIC.title + " — official YouTube player");
+        }
+      } catch (err) { /* there is no iframe to name yet */ }
       try {
         yt.setVolume(wantedVolume);
         // Show the official upload's own title when the player offers it.
@@ -364,96 +322,16 @@
       }
     }
 
-    /* Source 2: the same track's official SoundCloud upload --------------- */
-    function startSoundCloud() {
-      if (source === "soundcloud" && scFrame) return;
-      source = "soundcloud";
-      if (!scFrame) {
-        scFrame = document.createElement("iframe");
-        scFrame.id = "musicFrame";
-        scFrame.className = "player__audio";
-        scFrame.title = MUSIC.title + " — official SoundCloud player";
-        scFrame.setAttribute("allow", "autoplay");
-        scFrame.setAttribute("scrolling", "no");
-        scFrame.setAttribute("frameborder", "no");
-        scFrame.src = MUSIC.fallback.src;
-        (stageBox || stage).appendChild(scFrame);
-      }
-      loadWidgetApi();
-
-      // The widget is a third party: if it never comes up, say so instead of
-      // leaving a button that looks like it did nothing.
-      clearTimeout(scWatchdog);
-      scWatchdog = setTimeout(function () {
-        if (wantPlay && !playing) showError(giveUpMarkup());
-      }, MUSIC.startTimeoutMs * 3);
-    }
-
-    function loadWidgetApi() {
-      if (sc || !scFrame) return;
-      if (window.SC && window.SC.Widget) {
-        buildWidget();
-        return;
-      }
-      if (document.getElementById("scWidgetApi")) return;   // already loading
-
-      const script = document.createElement("script");
-      script.id = "scWidgetApi";
-      script.src = MUSIC.fallback.widgetApi;
-      script.onload = buildWidget;
-      script.onerror = function () { failOver("soundcloud"); };
-      document.head.appendChild(script);
-    }
-
-    function buildWidget() {
-      if (sc || !scFrame) return;
-      const SC = window.SC;
-      if (!SC || !SC.Widget) {
-        failOver("soundcloud");
-        return;
-      }
-      sc = SC.Widget(scFrame);
-      sc.bind(SC.Widget.Events.READY, function () {
-        clearTimeout(scWatchdog);
-        scReady = true;
-        sc.setVolume(wantedVolume);
-        if (playWhenReady) {
-          playWhenReady = false;
-          requestPlay();
-        }
-      });
-      sc.bind(SC.Widget.Events.PLAY, function () {
-        clearTimeout(watchdog);
-        clearTimeout(scWatchdog);
-        clearError();
-        setPlaying(true);
-      });
-      sc.bind(SC.Widget.Events.PAUSE, function () {
-        setPlaying(false);
-        armResumeWatchdog();
-      });
-      sc.bind(SC.Widget.Events.FINISH, function () { clearTimeout(watchdog); wantPlay = false; setPlaying(false); });
-      sc.bind(SC.Widget.Events.ERROR, function () { clearTimeout(scWatchdog); failOver("soundcloud"); });
-    }
-
-    /* Falling back, then giving up ----------------------------------------- */
-    function failOver(from) {
+    /* Giving up ------------------------------------------------------------- */
+    // YouTube's player refused to run. Rather than stream the song from
+    // somewhere else, the card says so and links to the track's official page.
+    function failOver() {
       clearTimeout(watchdog);
       setPlaying(false);
-      if (from === "youtube" && !ytFailed) {
-        ytFailed = true;
-        yt = null;
-        ytReady = false;
-        startSoundCloud();
-        // Carry the visitor's intent over, so the track starts by itself as
-        // soon as the fallback player is ready — they already pressed play.
-        if (wantPlay) {
-          if (scReady) requestPlay();
-          else playWhenReady = true;
-        }
-        return;
-      }
-      // Every official source refused: point the visitor at the official pages.
+      ytFailed = true;
+      yt = null;
+      ytReady = false;
+      playWhenReady = false;
       showError(giveUpMarkup());
     }
 

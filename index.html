@@ -303,14 +303,13 @@
             </li>
             <li>
               Playback: streamed through YouTube's official embedded player (the YouTube IFrame
-              Player API). No audio is downloaded, extracted, converted or re-hosted, and no audio
-              file is stored with this site.
+              Player API), shown in full with YouTube's own controls, title and branding, and no
+              video or audio is downloaded, extracted, converted or re-hosted. No audio file is
+              stored with this site.
             </li>
             <li>
-              Fallback: if YouTube cannot play, the same controls use the track's official
-              SoundCloud upload —
-              <a href="https://soundcloud.com/justice-official/flower-in-a-hurricane-feat" target="_blank" rel="noopener noreferrer">soundcloud.com/justice-official</a>
-              — through SoundCloud's official widget.
+              No second source: if YouTube's player cannot run, the card says so and links to the
+              official page above instead of streaming the track from anywhere else.
             </li>
             <li>
               Rights: the recording, the composition and the artwork belong to the artists and
@@ -431,14 +430,15 @@
           <ul class="credit-card__list">
             <li>
               YouTube IFrame Player API
-              (<a href="https://developers.google.com/youtube/terms/api-services-terms-of-service" target="_blank" rel="noopener noreferrer">API Services Terms</a>)
-              and the SoundCloud Widget API
-              (<a href="https://developers.soundcloud.com/docs/api/terms-of-use" target="_blank" rel="noopener noreferrer">terms of use</a>)
-              — official platform SDKs loaded from the platforms' own servers.
+              (<a href="https://developers.google.com/youtube/terms/api-services-terms-of-service" target="_blank" rel="noopener noreferrer">API Services Terms</a>,
+              YouTube
+              <a href="https://www.youtube.com/t/terms" target="_blank" rel="noopener noreferrer">Terms of Service</a>)
+              — the official SDK, loaded from YouTube's own server. This is the only library the
+              page loads.
             </li>
             <li>
               No analytics, no advertising, no trackers, no cookies and no local storage. The page
-              contacts only Google Fonts, YouTube, SoundCloud and its own host.
+              contacts only Google Fonts, YouTube and its own host.
             </li>
           </ul>
         </article>
@@ -474,19 +474,20 @@
     </div>
   </footer>
 
-  <!-- ===== Background music player (audio only) ===== -->
+  <!-- ===== Official music player ===== -->
   <aside class="player" id="musicPlayer" aria-label="Official GTA VI music">
-    <!-- Officially released GTA VI music, streamed from the rights holders' own
-         upload through SoundCloud's official player — nothing is bundled,
-         downloaded or re-uploaded, and this card is audio only: no video
-         preview, no artwork, no video frame. "Flower In A Hurricane" by Justice
-         feat. Tame Impala, SZA and King Gizzard & the Lizard Wizard is the first
-         single from the game (Ed Banger / Because / Take-Two, released
-         15 October 2026) and the track below is Justice's own upload.
-         Change music.trackUrl / music.title in script.js for another track. -->
+    <!-- The official YouTube upload of the game's first single, "Flower In A
+         Hurricane" by Justice feat. Tame Impala, SZA and King Gizzard & the
+         Lizard Wizard, streamed through YouTube's own embedded player — nothing
+         is bundled, downloaded, extracted or re-hosted. The player is shown in
+         full, with YouTube's own controls, title and branding untouched; the
+         pink button and volume slider below simply drive that same player
+         through YouTube's official IFrame Player API.
+         Change music.videoId / music.title in script.js for another official
+         upload and the controls and the title follow. -->
     <noscript>
-      <a class="player__external" href="https://soundcloud.com/justice-official/flower-in-a-hurricane-feat"
-         target="_blank" rel="noopener noreferrer">Official track on SoundCloud</a>
+      <a class="player__external" href="https://www.youtube.com/watch?v=5dPwBWvmcbQ"
+         target="_blank" rel="noopener noreferrer">Official track on YouTube</a>
     </noscript>
 
     <div class="player__row">
@@ -518,20 +519,17 @@
       </label>
     </div>
 
-    <!-- The official player itself is kept out of sight: this card is audio only,
-         so no thumbnail and no video frame are ever shown. The controls above
-         drive it, and script.js streams the track from the rights holders' own
-         official upload through that player's own API. -->
-    <div class="player__stage" aria-hidden="true">
+    <!-- YouTube's own player, shown in full and never covered or clipped: the
+         IFrame Player API builds it inside this box. Its controls, title and
+         branding stay exactly as YouTube renders them. -->
+    <div class="player__stage">
       <div class="player__yt" id="musicStage"></div>
     </div>
 
     <p class="player__error" id="musicError" role="alert" hidden>
-      Official music can't play here right now — open the track on
+      The official player can't start here right now — open the track on
       <a class="player__external" href="https://www.youtube.com/watch?v=5dPwBWvmcbQ"
-         target="_blank" rel="noopener noreferrer">YouTube</a> or
-      <a class="player__external" href="https://soundcloud.com/justice-official/flower-in-a-hurricane-feat"
-         target="_blank" rel="noopener noreferrer">SoundCloud</a>.
+         target="_blank" rel="noopener noreferrer">YouTube</a>.
     </p>
   </aside>
 
