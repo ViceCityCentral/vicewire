@@ -193,7 +193,7 @@
       </div>
     </section>
 
-    <!-- ===== Explore Leonida — the Collector's Edition map of the state ===== -->
+    <!-- ===== Explore Leonida — the map supplied for this fan site ===== -->
     <section class="section leonida" id="map" aria-labelledby="mapTitle">
       <div class="section__head">
         <p class="eyebrow">The Goodtime State</p>
@@ -211,13 +211,11 @@
 
         <div class="map-viewport" id="mapViewport" tabindex="0"
              aria-label="Map of Leonida: drag to pan, use plus and minus to zoom, 0 to reset">
-          <picture>
-            <source srcset="assets/gta-vi-leonida-map.webp" type="image/webp" />
-            <img class="map-image" id="mapImage"
-                 src="assets/gta-vi-leonida-map.jpg"
-                 alt="Illustrated map of the state of Leonida, with Vice City, from the Grand Theft Auto VI Collector's Edition souvenir poster"
-                 width="1440" height="1440" loading="lazy" decoding="async" draggable="false" />
-          </picture>
+          <!-- The site owner's own Leonida map artwork (473×648 portrait). -->
+          <img class="map-image" id="mapImage"
+               src="assets/gta-vi-leonida-map.jpg"
+               alt="Stylised map of the state of Leonida used on this fan site, showing Vice City and Vice Dale County on the east coast with the surrounding counties, coastline and islands"
+               width="473" height="648" loading="lazy" decoding="async" draggable="false" />
           <p class="map-empty" id="mapEmpty" hidden>
             The map image could not load — check your connection and reload the page.
           </p>
@@ -225,15 +223,14 @@
 
         <div class="map-credit">
           <p>
-            <strong>Where this map comes from:</strong> it is the map artwork printed on the back of
-            the <em>Double-Sided Souvenir Poster with Map of Leonida</em>, which ships inside
-            <em>Grand Theft Auto VI: The Goodtime State – Vice City™ Collection</em> — taken from
-            <a href="https://store.rockstargames.com/merchandise/gtavi-goodtime-state-vice-city-collection" target="_blank" rel="noopener noreferrer">Rockstar Games' own store</a>.
+            <strong>About this map:</strong> the Leonida map artwork supplied for this fan site — a
+            stylised map of the state, with Vice City and Vice Dale County on the east coast and the
+            surrounding counties, coastline and islands. It is not an official Rockstar Games map,
+            and it shows nothing from the leaked material.
           </p>
           <p>
             Rockstar Games has not published an interactive map of Leonida, so the zoom, pan and
-            fullscreen viewer above is this fan site's own — it is not an official map tool and it
-            shows nothing from the leaked material.
+            fullscreen viewer above is this site's own — it is not an official map tool.
           </p>
           <p class="map-credit__note">
             Unofficial fan project · not affiliated with Rockstar Games or Take-Two Interactive.
@@ -300,20 +297,20 @@
       </label>
     </div>
 
-    <!-- The official player itself, kept to a slim audio bar: no video, no artwork.
-         script.js drives it (play/pause, volume) through SoundCloud's Widget API. -->
-    <div class="player__stage">
-      <span class="player__stage-label">Official audio</span>
-      <iframe id="musicFrame" class="player__audio"
-              title="Official GTA VI music — Flower In A Hurricane by Justice"
-              scrolling="no" frameborder="no" allow="autoplay"
-              src="https://w.soundcloud.com/player/?url=https%3A%2F%2Fapi.soundcloud.com%2Ftracks%2F2418269610&amp;color=%23ff2e9a&amp;auto_play=false&amp;hide_related=true&amp;show_comments=false&amp;show_user=false&amp;show_artwork=false&amp;show_playcount=false&amp;show_reposts=false&amp;show_teaser=false&amp;sharing=false&amp;download=false&amp;buying=false&amp;liking=false&amp;visual=false"></iframe>
+    <!-- The official player itself is kept out of sight: this card is audio only,
+         so no thumbnail and no video frame are ever shown. The controls above
+         drive it, and script.js streams the track from the rights holders' own
+         official upload through that player's own API. -->
+    <div class="player__stage" aria-hidden="true">
+      <div class="player__yt" id="musicStage"></div>
     </div>
 
     <p class="player__error" id="musicError" role="alert" hidden>
-      Official music can't load right now —
+      Official music can't play here right now — open the track on
+      <a class="player__external" href="https://www.youtube.com/watch?v=5dPwBWvmcbQ"
+         target="_blank" rel="noopener noreferrer">YouTube</a> or
       <a class="player__external" href="https://soundcloud.com/justice-official/flower-in-a-hurricane-feat"
-         target="_blank" rel="noopener noreferrer">open the track on SoundCloud</a>.
+         target="_blank" rel="noopener noreferrer">SoundCloud</a>.
     </p>
   </aside>
 
