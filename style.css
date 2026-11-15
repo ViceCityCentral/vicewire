@@ -1492,3 +1492,121 @@ html.js .credit-card[data-reveal].is-revealed:hover {
   .credits-grid { grid-template-columns: 1fr; }
   .credit-card__list { font-size: 0.82rem; }
 }
+
+/* 16) Music player on phones ---------------------------------------------- */
+/* Additive block: a separate mobile presentation of the same player. Every rule
+   below sits inside a phone or short-viewport media query, so the desktop card
+   in (13) keeps its exact size, place, design, controls, animations and
+   behaviour. Portrait phones get a slim full-width bar along the bottom;
+   landscape phones get a small corner card with everything on one line. The
+   YouTube player, the pink button, the volume slider and the JS driving them are
+   the same — only the arrangement changes. */
+
+@media (max-width: 620px) {
+  .player {
+    /* Full-width bar, clear of the screen edges and of the home bar. */
+    left: clamp(0.55rem, 3vw, 0.9rem);
+    right: clamp(0.55rem, 3vw, 0.9rem);
+    bottom: calc(clamp(0.4rem, 1.6vh, 0.6rem) + env(safe-area-inset-bottom, 0px));
+    width: auto;
+    max-width: none;
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    align-items: center;
+    column-gap: 0.45rem;
+    row-gap: 0.15rem;
+    padding: 0.3rem 0.45rem;
+    border-radius: 13px;
+  }
+
+  /* Hairline neon accent along the top of the bar. */
+  .player::before {
+    content: "";
+    position: absolute;
+    inset: 0 0 auto 0;
+    height: 2px;
+    border-radius: 13px 13px 0 0;
+    background: linear-gradient(90deg, var(--turquoise), var(--pink));
+    opacity: 0.5;
+  }
+
+  /* The two rows are wrappers on desktop; on the phone their contents join the
+     bar's own grid, so video, text, button and slider align in one structure. */
+  .player__row,
+  .player__vol { display: contents; }
+
+  .player__stage { grid-area: 1 / 1 / 3 / 2; width: clamp(84px, 26vw, 116px); border-radius: 9px; }
+  .player__body { grid-area: 1 / 2 / 2 / 3; }
+  .player__toggle { grid-area: 1 / 3 / 2 / 4; width: 44px; height: 44px; }
+  .player__glyph { width: 20px; height: 20px; }
+
+  /* The slider sits on its own line and the word "Volume" makes way for it (the
+     range keeps its aria-label). Its box is a full 44px tall for an easy hit,
+     but the negative margins keep the line itself 34px, so the bar stays slim. */
+  .player__vol-label { display: none; }
+  .player__range { grid-area: 2 / 2 / 3 / 4; height: 44px; margin: -5px 0; }
+  .player__range::-webkit-slider-thumb { width: 20px; height: 20px; }
+  .player__range::-moz-range-thumb { width: 20px; height: 20px; }
+
+  .player__error { grid-area: 3 / 1 / 4 / 4; }
+
+  .player__label { font-size: 0.55rem; letter-spacing: 1.8px; line-height: 1.15; }
+  .player__now { gap: 0.3rem; }
+  .player__title { font-size: 0.7rem; }
+
+  /* The bar is under 95px tall, so the footer needs far less clearance than it
+     does for the desktop card. If the player cannot start it grows by a line,
+     and then the footer gets more room again (:has() is ignored elsewhere). */
+  .site-footer { padding-bottom: 7.5rem; }
+  body:has(.player.has-error) .site-footer { padding-bottom: 10rem; }
+}
+
+/* Landscape phones: little height, plenty of width, so everything goes on one
+   line in a small corner card instead of a full-width bar. */
+@media (orientation: landscape) and (max-height: 480px) and (max-width: 960px) and (pointer: coarse) {
+  .player {
+    left: auto;
+    right: clamp(0.5rem, 2vw, 0.8rem);
+    bottom: calc(clamp(0.4rem, 1.6vh, 0.7rem) + env(safe-area-inset-bottom, 0px));
+    width: min(352px, calc(100vw - 1.1rem));
+    max-width: none;
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto auto;
+    align-items: center;
+    column-gap: 0.45rem;
+    row-gap: 0.15rem;
+    padding: 0.3rem 0.45rem;
+    border-radius: 12px;
+  }
+
+  .player::before {
+    content: "";
+    position: absolute;
+    inset: 0 0 auto 0;
+    height: 2px;
+    border-radius: 12px 12px 0 0;
+    background: linear-gradient(90deg, var(--turquoise), var(--pink));
+    opacity: 0.5;
+  }
+
+  .player__row,
+  .player__vol { display: contents; }
+
+  .player__stage { grid-area: 1 / 1 / 2 / 2; width: 100px; border-radius: 8px; }
+  .player__body { grid-area: 1 / 2 / 2 / 3; }
+  .player__toggle { grid-area: 1 / 3 / 2 / 4; width: 44px; height: 44px; }
+  .player__glyph { width: 20px; height: 20px; }
+  .player__vol-label { display: none; }
+  /* 44px-tall hit area on a 34px line: the negative margins absorb the rest. */
+  .player__range { grid-area: 1 / 4 / 2 / 5; width: 76px; height: 44px; margin: -5px 0; }
+  .player__range::-webkit-slider-thumb { width: 20px; height: 20px; }
+  .player__range::-moz-range-thumb { width: 20px; height: 20px; }
+  .player__error { grid-area: 2 / 1 / 3 / 5; }
+
+  .player__label { font-size: 0.55rem; letter-spacing: 1.6px; line-height: 1.15; }
+  .player__now { gap: 0.3rem; }
+  .player__title { font-size: 0.68rem; }
+
+  .site-footer { padding-bottom: 6rem; }
+  body:has(.player.has-error) .site-footer { padding-bottom: 7.5rem; }
+}
