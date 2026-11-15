@@ -558,8 +558,10 @@
               page loads.
             </li>
             <li>
-              No analytics, no advertising, no trackers, no cookies and no local storage. The page
-              contacts only Google Fonts, YouTube and its own host.
+              No analytics, no advertising, no tracking scripts and no local storage. The only
+              cookie this page sets of its own is your answer to the cookie notice, kept on your
+              device for 180 days; YouTube and Google Fonts, the two services the page contacts
+              besides its own host, may set their own.
             </li>
           </ul>
         </article>
@@ -662,6 +664,24 @@
          target="_blank" rel="noopener noreferrer">YouTube</a>.
     </p>
   </aside>
+
+  <!-- Cookie notice. Informational only: it says what the page loads and remembers
+       the visitor's answer in one cookie on their own device. No answer changes
+       what loads, so it ships hidden and script.js reveals it only when no answer
+       is stored yet. -->
+  <section class="cookies" id="cookieNotice" aria-labelledby="cookieNoticeTitle" hidden>
+    <p class="cookies__title" id="cookieNoticeTitle">Cookies</p>
+    <p class="cookies__text">
+      This fan project embeds YouTube's players and loads Google Fonts, so those
+      services may set cookies in your browser. Nothing else is tracked — no
+      analytics, no advertising. Your answer here is remembered in one cookie on
+      this device only, and the videos load either way.
+    </p>
+    <div class="cookies__actions">
+      <button class="g-btn cookies__btn" id="cookieAccept" type="button">Accept</button>
+      <button class="g-btn g-btn--ghost cookies__btn" id="cookieDecline" type="button">Decline</button>
+    </div>
+  </section>
 
   <script src="script.js"></script>
 </body>

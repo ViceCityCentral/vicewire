@@ -1671,3 +1671,113 @@ html.js .credit-card[data-reveal].is-revealed:hover {
   .site-footer { padding-bottom: 6rem; }
   body:has(.player.has-error) .site-footer { padding-bottom: 7.5rem; }
 }
+
+/* 17) Cookie notice ------------------------------------------------------- */
+/* One card, bottom left, dressed like the music player so the two fixed pieces
+   read as a family. `--player-reserve` is how much room the player card needs on
+   the right at this breakpoint; the notice keeps out of it and stays clear of the
+   player rather than covering it. */
+.cookies {
+  --player-reserve: 300px;
+  position: fixed;
+  z-index: 16;
+  left: clamp(0.75rem, 2.2vw, 1.5rem);
+  right: calc(var(--player-reserve) + 2 * clamp(0.75rem, 2.2vw, 1.5rem) + 0.5rem);
+  bottom: clamp(0.75rem, 2.2vh, 1.5rem);
+  width: auto;
+  max-width: 520px;
+  padding: 0.85rem 1rem 1rem;
+  border-radius: 16px;
+  background: linear-gradient(155deg, rgba(11, 27, 77, 0.96), rgba(5, 10, 43, 0.97));
+  border: 1px solid rgba(255, 46, 154, 0.42);
+  box-shadow:
+    0 12px 32px rgba(3, 6, 28, 0.6),
+    inset 0 0 18px rgba(46, 230, 230, 0.1),
+    0 0 22px rgba(255, 46, 154, 0.28);
+  color: var(--white);
+  opacity: 0;
+  transform: translateY(14px);
+  transition: opacity 0.28s ease, transform 0.28s ease;
+}
+
+.cookies[hidden] { display: none; }
+.cookies.is-shown { opacity: 1; transform: none; }
+
+.cookies__title {
+  margin: 0 0 0.45rem;
+  font-family: var(--font-display);
+  font-size: 1.05rem;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--turquoise);
+}
+
+.cookies__text {
+  margin: 0;
+  font-size: 0.78rem;
+  line-height: 1.55;
+  color: var(--white);
+}
+
+.cookies__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 0.85rem;
+}
+
+.cookies__btn { flex: 1 1 auto; min-height: 40px; padding: 0.55rem 1rem; }
+
+/* The player keeps its 300px card right down to 621px, so the notice's reserve
+   only changes where the player itself does (see the two queries below). */
+
+/* Phones: the player becomes a full-width bar along the bottom, so the notice
+   sits directly above it across the same width. The 92px is the bar's measured
+   height (112px when it has grown its error line). */
+@media (max-width: 620px) {
+  .cookies {
+    left: clamp(0.55rem, 3vw, 0.9rem);
+    right: clamp(0.55rem, 3vw, 0.9rem);
+    bottom: calc(clamp(0.4rem, 1.6vh, 0.6rem) + 92px + 0.85rem + env(safe-area-inset-bottom, 0px));
+    max-width: none;
+    padding: 0.75rem 0.85rem 0.85rem;
+  }
+
+  body:has(.player.has-error) .cookies {
+    bottom: calc(clamp(0.4rem, 1.6vh, 0.6rem) + 134px + 0.85rem + env(safe-area-inset-bottom, 0px));
+  }
+
+  .cookies__text { font-size: 0.74rem; line-height: 1.5; }
+  .cookies__btn { min-height: 44px; }
+
+  /* The notice rides above the player bar, so the footer needs room for both —
+     and only while the notice is still on screen. */
+  body:has(.cookies:not([hidden])) .site-footer { padding-bottom: 22rem; }
+  body:has(.cookies:not([hidden])):has(.player.has-error) .site-footer { padding-bottom: 25rem; }
+}
+
+/* Landscape phones: the player is back to a corner card, and the screen is short,
+   so the notice takes the free space to its left and keeps to a few lines. */
+@media (orientation: landscape) and (max-height: 480px) and (max-width: 960px) and (pointer: coarse) {
+  .cookies {
+    --player-reserve: 352px;
+    bottom: calc(clamp(0.4rem, 1.6vh, 0.7rem) + 68px + 0.85rem + env(safe-area-inset-bottom, 0px));
+    padding: 0.6rem 0.75rem 0.7rem;
+  }
+
+  body:has(.player.has-error) .cookies {
+    bottom: calc(clamp(0.4rem, 1.6vh, 0.7rem) + 108px + 0.85rem + env(safe-area-inset-bottom, 0px));
+  }
+
+  .cookies__title { margin-bottom: 0.3rem; font-size: 0.92rem; }
+  .cookies__text { font-size: 0.7rem; line-height: 1.45; }
+  .cookies__actions { margin-top: 0.6rem; }
+  .cookies__btn { min-height: 44px; padding: 0.45rem 0.8rem; font-size: 0.7rem; }
+
+  body:has(.cookies:not([hidden])) .site-footer { padding-bottom: 19rem; }
+  body:has(.cookies:not([hidden])):has(.player.has-error) .site-footer { padding-bottom: 22rem; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cookies { transition: none; transform: none; }
+}

@@ -1,7 +1,7 @@
 /* ==========================================================================
    GTA VI · Vice City Countdown — behaviour
    1) Config  2) Date  3) Countdown  4) Music player  5) Scroll reveal
-   6) Scroll reveal  7) Boot
+   6) Cookie notice  7) Boot
    ========================================================================== */
 (function () {
   "use strict";
@@ -437,7 +437,73 @@
     targets.forEach(function (el) { observer.observe(el); });
   }
 
-  /* 6) Boot -------------------------------------------------------------- */
+  /* 6) Cookie notice ------------------------------------------------------
+     The notice is informational: it explains that the page loads YouTube's
+     players and Google Fonts, and it records the visitor's answer in one cookie
+     on their own device so the card does not come back on every visit. No
+     answer changes what the page loads — the embeds are the page — so the
+     buttons only store the answer, and the card says as much.
+
+     Reuse: raise CHOICE_VERSION after rewording the notice and everyone who has
+     not answered that version is asked once more. */
+  const COOKIE = {
+    name: "viceCityCentralCookies_v1",
+    days: 180,
+    version: 1,
+    accepted: "accepted",
+    declined: "declined"
+  };
+
+  function readCookieChoice() {
+    const match = document.cookie.match(
+      new RegExp("(?:^|;\\s*)" + COOKIE.name + "=([^;]*)")
+    );
+    if (!match) return null;
+    // e.g. "accepted.1" — an older wording's answer does not count as this one's,
+    // and anything that is not one of the two known answers is ignored.
+    const parts = decodeURIComponent(match[1]).split(".");
+    const known = parts[0] === COOKIE.accepted || parts[0] === COOKIE.declined;
+    return known && Number(parts[1]) === COOKIE.version ? parts[0] : null;
+  }
+
+  // Best effort: a browser that blocks cookies (or private mode) simply keeps
+  // the card for next time, which is why the return value is not checked.
+  function storeCookieChoice(choice) {
+    const expires = new Date(Date.now() + COOKIE.days * 86400000).toUTCString();
+    const secure = window.location.protocol === "https:" ? "; Secure" : "";
+    document.cookie =
+      COOKIE.name + "=" + encodeURIComponent(choice + "." + COOKIE.version) +
+      "; expires=" + expires + "; path=/; SameSite=Lax" + secure;
+  }
+
+  function initCookieNotice() {
+    const notice = document.getElementById("cookieNotice");
+    if (!notice) return;
+
+    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    function answer(choice) {
+      storeCookieChoice(choice);
+      notice.classList.remove("is-shown");
+      window.setTimeout(function () {
+        notice.hidden = true;
+      }, reduceMotion ? 0 : 300);
+    }
+
+    const accept = document.getElementById("cookieAccept");
+    const decline = document.getElementById("cookieDecline");
+    if (accept) accept.addEventListener("click", function () { answer(COOKIE.accepted); });
+    if (decline) decline.addEventListener("click", function () { answer(COOKIE.declined); });
+
+    // No stored answer yet: show it, and fade it in once it has been laid out.
+    if (readCookieChoice()) return;
+    notice.hidden = false;
+    window.requestAnimationFrame(function () {
+      window.requestAnimationFrame(function () { notice.classList.add("is-shown"); });
+    });
+  }
+
+  /* 7) Boot -------------------------------------------------------------- */
   function init() {
     renderToday();
     describeRelease();
@@ -448,6 +514,7 @@
 
     initMusicPlayer();
     initReveal();
+    initCookieNotice();
   }
 
   document.addEventListener("DOMContentLoaded", function () {
