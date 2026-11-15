@@ -382,36 +382,6 @@ a { color: var(--turquoise); }
   box-shadow: var(--glow-cyan);
 }
 
-.cinematic__cue {
-  position: absolute;
-  z-index: 3;
-  bottom: clamp(0.9rem, 3vh, 1.8rem);
-  left: 50%;
-  transform: translateX(-50%);
-  display: grid;
-  place-items: center;
-  width: 34px;
-  height: 34px;
-  border-radius: 50%;
-  border: 1px solid rgba(255, 255, 255, 0.4);
-  background: rgba(5, 10, 43, 0.35);
-  animation: riseIn 1.2s ease both;
-}
-
-.cinematic__cue-dot {
-  width: 7px;
-  height: 7px;
-  border-radius: 50%;
-  background: var(--pink);
-  box-shadow: var(--glow-pink);
-  animation: cueBob 1.8s ease-in-out infinite;
-}
-
-@keyframes cueBob {
-  0%, 100% { transform: translateY(-3px); opacity: 0.75; }
-  50%      { transform: translateY(3px);  opacity: 1; }
-}
-
 /* 7) Trailers ----------------------------------------------------------- */
 .trailer-grid {
   display: grid;
@@ -1390,7 +1360,6 @@ html:not(.js) .player__stage { display: none; }
 @media (max-width: 620px) {
   .brand__sub { display: none; }
   .cinematic__inner { padding-block: clamp(3rem, 9vh, 5rem); }
-  .cinematic__cue { display: none; }
   .today time { font-size: 1.05rem; }
   .countdown { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.7rem; }
   .cast-card__name { font-size: 2.3rem; }
