@@ -1246,6 +1246,53 @@ html:not(.js) .player__stage { display: none; }
   text-overflow: ellipsis;
 }
 
+/* The "now playing" line is the control that steps to the next official
+   upload. It is the same line as before, so the card keeps its exact size:
+   the title still takes the space that is left and truncates. */
+.player__switch {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  width: 100%;
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.player__switch:focus-visible {
+  outline: 2px solid var(--turquoise);
+  outline-offset: 3px;
+  border-radius: 6px;
+}
+
+.player__count {
+  flex: 0 0 auto;
+  font-size: 0.5rem;
+  letter-spacing: 1.5px;
+  color: var(--muted);
+}
+
+.player__swap {
+  flex: 0 0 auto;
+  width: 13px;
+  height: 13px;
+  fill: var(--pink-soft);
+  opacity: 0.85;
+  transition: transform 0.2s ease, opacity 0.2s ease;
+}
+
+.player__switch:hover .player__swap,
+.player__switch:focus-visible .player__swap { opacity: 1; transform: translateX(2px); }
+.player__switch:active .player__swap { transform: translateX(3.5px); }
+.player__switch:hover .player__title,
+.player__switch:focus-visible .player__title { color: var(--pink-soft); }
+
 /* Animated equaliser — the "music is playing" indicator. */
 .player__eq { display: flex; align-items: flex-end; gap: 2px; height: 14px; flex: 0 0 auto; }
 
@@ -1551,8 +1598,15 @@ html.js .credit-card[data-reveal].is-revealed:hover {
   .player__error { grid-area: 3 / 1 / 4 / 4; }
 
   .player__label { font-size: 0.55rem; letter-spacing: 1.8px; line-height: 1.15; }
-  .player__now { gap: 0.3rem; }
+  /* The line itself stays as slim as before; the negative margins give the
+     control a taller, easier tap area without growing the bar. */
+  .player__switch { gap: 0.3rem; min-height: 30px; margin: -6px 0; }
   .player__title { font-size: 0.7rem; }
+  /* The phone cards have no width to spare, so the 1/2 counter gives way to
+     the song title; the chevron and the button's own label still say that
+     there is another official track. */
+  .player__count { display: none; }
+  .player__swap { width: 11px; height: 11px; }
 
   /* The bar is under 95px tall, so the footer needs far less clearance than it
      does for the desktop card. If the player cannot start it grows by a line,
@@ -1604,8 +1658,15 @@ html.js .credit-card[data-reveal].is-revealed:hover {
   .player__error { grid-area: 2 / 1 / 3 / 5; }
 
   .player__label { font-size: 0.55rem; letter-spacing: 1.6px; line-height: 1.15; }
-  .player__now { gap: 0.3rem; }
+  /* The line itself stays as slim as before; the negative margins give the
+     control a taller, easier tap area without growing the bar. */
+  .player__switch { gap: 0.3rem; min-height: 30px; margin: -6px 0; }
   .player__title { font-size: 0.68rem; }
+  /* The phone cards have no width to spare, so the 1/2 counter gives way to
+     the song title; the chevron and the button's own label still say that
+     there is another official track. */
+  .player__count { display: none; }
+  .player__swap { width: 11px; height: 11px; }
 
   .site-footer { padding-bottom: 6rem; }
   body:has(.player.has-error) .site-footer { padding-bottom: 7.5rem; }

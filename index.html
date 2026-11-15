@@ -413,11 +413,16 @@
           <p class="credit-card__body">
             <strong>&ldquo;Flower In A Hurricane&rdquo;</strong> — Justice featuring Tame Impala,
             SZA and King Gizzard &amp; the Lizard Wizard, the first single from Grand Theft Auto VI.
+            Also in the player: <strong>&ldquo;Grand Theft Auto: San Andreas (Official Theme
+            Song)&rdquo;</strong> — Michael Hunter's theme for Grand Theft Auto: San Andreas.
           </p>
           <ul class="credit-card__list">
             <li>
-              Source: Justice's own official upload —
-              <a href="https://www.youtube.com/watch?v=5dPwBWvmcbQ" target="_blank" rel="noopener noreferrer">youtube.com/watch?v=5dPwBWvmcbQ</a>
+              Sources: the two official uploads the player steps between — Justice's own upload,
+              <a href="https://www.youtube.com/watch?v=5dPwBWvmcbQ" target="_blank" rel="noopener noreferrer">youtube.com/watch?v=5dPwBWvmcbQ</a>,
+              and Michael Hunter's theme from the release Rockstar Games distributes to YouTube
+              (℗ Rockstar Games),
+              <a href="https://www.youtube.com/watch?v=7qfbi3HACV8" target="_blank" rel="noopener noreferrer">youtube.com/watch?v=7qfbi3HACV8</a>.
             </li>
             <li>
               Playback: streamed through YouTube's official embedded player (the YouTube IFrame
@@ -591,16 +596,15 @@
   </footer>
 
   <!-- ===== Official music player ===== -->
-  <aside class="player" id="musicPlayer" aria-label="Official GTA VI music">
-    <!-- The official YouTube upload of the game's first single, "Flower In A
-         Hurricane" by Justice feat. Tame Impala, SZA and King Gizzard & the
-         Lizard Wizard, streamed through YouTube's own embedded player — nothing
-         is bundled, downloaded, extracted or re-hosted. The player is shown in
-         full, with YouTube's own controls, title and branding untouched; the
-         pink button and volume slider below simply drive that same player
-         through YouTube's official IFrame Player API.
-         Change music.videoId / music.title in script.js for another official
-         upload and the controls and the title follow. -->
+  <aside class="player" id="musicPlayer" aria-label="Official GTA music">
+    <!-- Two official YouTube uploads, streamed through YouTube's own embedded
+         player — nothing is bundled, downloaded, extracted or re-hosted. The
+         player is shown in full, with YouTube's own controls, title and
+         branding untouched; the pink button and volume slider below simply
+         drive that same player through YouTube's official IFrame Player API,
+         and the "now playing" line steps to the next official upload.
+         The list lives in music.tracks in script.js: add an entry there and it
+         joins the player. -->
     <noscript>
       <a class="player__external" href="https://www.youtube.com/watch?v=5dPwBWvmcbQ"
          target="_blank" rel="noopener noreferrer">Official track on YouTube</a>
@@ -621,8 +625,18 @@
       <div class="player__body">
         <p class="player__label">Now playing <span class="player__badge">Official</span></p>
         <p class="player__now">
-          <span class="player__eq" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
-          <span class="player__title" id="musicTitle">Flower In A Hurricane — Justice</span>
+          <!-- The whole line is the control: pressing it loads the next official
+               upload into the same YouTube player. -->
+          <button class="player__switch" id="musicStep" type="button"
+                  aria-label="Next track — 2 official uploads in this player">
+            <span class="player__eq" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
+            <span class="player__title" id="musicTitle">Flower In A Hurricane — Justice</span>
+            <span class="player__count" id="musicCount">1/2</span>
+            <svg class="player__swap" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+              <path d="M4 6l6 6-6 6z" />
+              <path d="M12 6l6 6-6 6z" />
+            </svg>
+          </button>
         </p>
       </div>
     </div>

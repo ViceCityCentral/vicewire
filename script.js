@@ -21,20 +21,31 @@
        page only sends it play/pause/volume commands through that player's API,
        and YouTube's controls, title and branding are left untouched.
 
-       "Flower In A Hurricane" — Justice featuring Tame Impala, SZA and King
-       Gizzard & the Lizard Wizard — is the first single from the game and this
-       is the official upload. Change videoId/watchUrl/title for another official
-       upload and the play/pause button, the volume slider and the title follow.
+       Each entry of the list below is one of those official uploads, and the
+       "now playing" line in the card is the control that steps through them.
+       Add an entry (videoId + watchUrl + title) and it joins the list; the
+       first one is what the card starts on.
 
        There is no second audio source: if YouTube refuses to play, the card
-       says so and links to the track's official page rather than streaming the
-       song from anywhere else. */
+       says so and links to the current track's official page rather than
+       streaming the song from anywhere else. */
     music: {
-      videoId: "5dPwBWvmcbQ",
+      tracks: [
+        {
+          videoId: "5dPwBWvmcbQ",
+          watchUrl: "https://www.youtube.com/watch?v=5dPwBWvmcbQ",
+          title: "Flower In A Hurricane — Justice"
+        },
+        {
+          // Michael Hunter's theme, from the release Rockstar Games itself
+          // distributes to YouTube (℗ Rockstar Games) — the official upload.
+          videoId: "7qfbi3HACV8",
+          watchUrl: "https://www.youtube.com/watch?v=7qfbi3HACV8",
+          title: "Grand Theft Auto: San Andreas (Official Theme Song)"
+        }
+      ],
       iframeApi: "https://www.youtube.com/iframe_api",
       host: "https://www.youtube-nocookie.com",
-      watchUrl: "https://www.youtube.com/watch?v=5dPwBWvmcbQ",
-      title: "Flower In A Hurricane — Justice",
       volume: 45,           // 0-100, and the volume slider's starting position
       startTimeoutMs: 5000  // how long a play request may stay silent before we hint
     }
@@ -117,7 +128,12 @@
      The visitor's pink play/pause button and volume slider drive that same
      player through YouTube's official IFrame Player API and mirror its real
      state; nothing is downloaded, extracted or re-hosted, and YouTube's
-     controls, title and branding stay exactly as YouTube renders them. */
+     controls, title and branding stay exactly as YouTube renders them.
+
+     The card carries the whole track list from CONFIG.music.tracks: the "now
+     playing" line steps to the next official upload, and everything that
+     describes the track (title, the 1 / 2 counter, the fallback link and the
+     iframe's accessible name) follows it. */
   function initMusicPlayer() {
     const player = $("musicPlayer");
     const stage = $("musicStage");
@@ -125,9 +141,14 @@
     const volume = $("musicVolume");
     const error = $("musicError");
     const title = $("musicTitle");
+    const counter = $("musicCount");
+    const step = $("musicStep");
     if (!player || !stage || !toggle) return;
 
     const MUSIC = CONFIG.music;
+    const tracks = MUSIC.tracks;
+    let trackIndex = 0;
+    let track = tracks[0];     // the upload the card is showing
     let wantedVolume = Math.min(100, Math.max(0, MUSIC.volume));
 
     let yt = null;             // YouTube's player, once its API is up
@@ -145,7 +166,7 @@
       playing = isPlaying;
       player.classList.toggle("is-playing", isPlaying);
       toggle.setAttribute("aria-pressed", String(isPlaying));
-      toggle.setAttribute("aria-label", (isPlaying ? "Pause" : "Play") + " official GTA VI music");
+      toggle.setAttribute("aria-label", (isPlaying ? "Pause" : "Play") + " official GTA music");
     }
 
     function showError(markup) {
@@ -164,7 +185,7 @@
     // Only for the case where YouTube's own player will not run at all.
     function giveUpMarkup() {
       return "The official player can\u2019t start here right now \u2014 open the track on " +
-        '<a class="player__external" href="' + MUSIC.watchUrl + '" target="_blank" rel="noopener noreferrer">YouTube</a>.';
+        '<a class="player__external" href="' + track.watchUrl + '" target="_blank" rel="noopener noreferrer">YouTube</a>.';
     }
 
     // A play request that never turns into sound is nearly always the browser's
@@ -234,6 +255,52 @@
       });
     }
 
+    /* Stepping through the official uploads ---------------------------------
+       Everything the card says about a track is written from `track`, so
+       switching is one place: pick the next entry, re-label the card, and tell
+       YouTube's player to load it. If the player never came up, the labels and
+       the fallback link still follow, so the visitor can reach the track on
+       YouTube from the card's own link. */
+    function labelTrack() {
+      if (title && track.title) {
+        title.textContent = track.title;
+        title.title = track.title;
+      }
+      if (counter) counter.textContent = (trackIndex + 1) + "/" + tracks.length;
+      if (step) step.setAttribute("aria-label", "Next track — " + tracks.length + " official uploads in this player");
+      const fallback = error ? error.querySelector(".player__external") : null;
+      if (fallback) fallback.href = track.watchUrl;
+      // While it runs, YouTube's player names its own iframe from the video it
+      // has loaded, which is the most accurate name there is. If the player is
+      // gone, the name is kept in step with the card by hand instead.
+      if (!ytReady || !yt) {
+        const frame = stage.querySelector("iframe");
+        if (frame) frame.setAttribute("title", track.title + " — official YouTube player");
+      }
+    }
+
+    function stepTrack() {
+      if (tracks.length < 2) return;
+      trackIndex = (trackIndex + 1) % tracks.length;
+      track = tracks[trackIndex];
+      labelTrack();
+      if (!ytReady || !yt) return;      // the player will start on this track
+      try {
+        // loadVideoById plays, cueVideoById only loads — so a visitor who has
+        // not asked for sound gets the new track queued, not played at them.
+        if (wantPlay) {
+          yt.loadVideoById(track.videoId);
+          armWatchdog();
+        } else {
+          yt.cueVideoById(track.videoId);
+        }
+      } catch (err) {
+        failOver();
+      }
+    }
+
+    if (step) step.addEventListener("click", stepTrack);
+
     /* YouTube's own player -------------------------------------------------- */
     function loadYouTubeApi() {
       if (yt || ytFailed) return;
@@ -263,7 +330,7 @@
         return;
       }
       yt = new window.YT.Player(stage.id, {
-        videoId: MUSIC.videoId,
+        videoId: track.videoId,
         host: MUSIC.host,
         playerVars: {
           origin: window.location.origin,
@@ -287,7 +354,7 @@
         // YouTube's generated iframe carries no accessible name of its own.
         const frame = typeof yt.getIframe === "function" ? yt.getIframe() : null;
         if (frame && !frame.getAttribute("title")) {
-          frame.setAttribute("title", MUSIC.title + " — official YouTube player");
+          frame.setAttribute("title", track.title + " — official YouTube player");
         }
       } catch (err) { /* there is no iframe to name yet */ }
       try {
@@ -336,7 +403,7 @@
     }
 
     setPlaying(false);
-    if (title && MUSIC.title) title.textContent = MUSIC.title;
+    labelTrack();   // title, the 1/2 counter and the fallback link
 
     // Prepare the official player after the page has loaded, so nothing here
     // delays the site. Nothing plays on its own: the pink button does that.
